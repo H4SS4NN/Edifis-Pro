@@ -4,27 +4,23 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - dev               # Exécute les tests sur la branche d'intégration principale
-      - dev-frontend      # Exécute les tests sur la branche de développement frontend
-      - dev-backend       # Exécute les tests sur la branche de développement backend
-      - main              # Déploie lorsque le push est effectué sur la branche main
+      - dev                    # Branche d'intégration principale
+      - dev-backend/**         # Toutes les branches sous dev-backend
+      - dev-frontend/**        # Toutes les branches sous dev-frontend
+      - main                   # Branche de production pour le déploiement
   pull_request:
     branches:
       - dev
-      - dev-frontend
-      - dev-backend
-      # Lance les tests lors de la création ou mise à jour d'une pull request vers ces branches
+      - dev-backend/**
+      - dev-frontend/**
+      # Lance les tests lors de PR vers ces branches
 
 jobs:
-  test:
-    name: Test Backend et Frontend
-    # Job pour exécuter les tests dans les dossiers backend et frontend
+  test-backend:
+    name: Test Backend
+    # Ce job s'exécute si la branche est "dev" ou commence par "dev-backend"
+    if: github.ref == 'refs/heads/dev' || startsWith(github.ref, 'refs/heads/dev-backend')
     runs-on: ubuntu-latest
-    # Utilise une machine virtuelle Ubuntu
-    strategy:
-      matrix:
-        folder: [backend, frontend]
-        # La matrice permet de lancer ce job pour chacun des dossiers (backend et frontend)
     steps:
       - name: Check out code
         # Récupère le code source du dépôt
@@ -35,35 +31,53 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-          # Spécifie la version de Node.js à utiliser
 
-      - name: Install dependencies and run tests in ${{ matrix.folder }}
-        # Installe les dépendances et exécute les tests dans le dossier (backend ou frontend)
-        working-directory: ${{ matrix.folder }}
+      - name: Install dependencies and run backend tests
+        # Passe dans le dossier backend, installe les dépendances et lance les tests
+        working-directory: backend
         run: |
-          npm install                 # Installe les dépendances du projet
-          npm run test                # Exécute les tests (définis dans package.json)
+          npm install                 # Installe les dépendances du backend
+          npm run test                # Exécute les tests définis dans package.json du backend
 
-  deploy:
-    name: Déploiement sur Production
-    # Job de déploiement (exécuté uniquement sur la branche main)
-    if: github.ref == 'refs/heads/main'
-    # Ce job ne s'exécute que lorsqu'un push est effectué sur la branche main
+  test-frontend:
+    name: Test Frontend
+    # Ce job s'exécute si la branche est "dev" ou commence par "dev-frontend"
+    if: github.ref == 'refs/heads/dev' || startsWith(github.ref, 'refs/heads/dev-frontend')
     runs-on: ubuntu-latest
-    # Utilise une machine virtuelle Ubuntu
-    needs: test
-    # Ce job dépend du succès du job "test"
     steps:
       - name: Check out code
         # Récupère le code source du dépôt
         uses: actions/checkout@v2
 
       - name: Setup Node.js
-        # Configure Node.js pour le job de déploiement
+        # Configure Node.js pour l'environnement CI
         uses: actions/setup-node@v3
         with:
           node-version: 16
-          # Spécifie la version de Node.js à utiliser
+
+      - name: Install dependencies and run frontend tests
+        # Passe dans le dossier frontend, installe les dépendances et lance les tests
+        working-directory: frontend
+        run: |
+          npm install                 # Installe les dépendances du frontend
+          npm run test                # Exécute les tests définis dans package.json du frontend
+
+  deploy:
+    name: Deploy to Production
+    # Ce job de déploiement ne s'exécute que sur la branche main
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-frontend]
+    steps:
+      - name: Check out code
+        # Récupère le code source du dépôt
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        # Configure Node.js pour le déploiement
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
 
       - name: Build Frontend
         # Construit l'application frontend (React)
@@ -72,29 +86,29 @@ jobs:
           npm install                 # Installe les dépendances du frontend
           npm run build               # Compile l'application React en mode production
 
-      - name: Build Backend (si nécessaire)
-        # Construit l'application backend, si une étape de build est requise
+      - name: Build Backend (if needed)
+        # Construit l'application backend, si une étape de build est nécessaire
         working-directory: backend
         run: |
           npm install                 # Installe les dépendances du backend
           npm run build               # Exécute le build du backend (s'il y en a un)
 
       - name: Deploy
-        # Étape de déploiement simulé (pour un petit projet sans conteneurs ou serveur dédié)
+        # Étape de déploiement simulé (ici, on archive les artefacts)
         run: |
           echo "Déploiement de l'application..."
-          echo "Archivage des artefacts de build"
+          echo "Archivage des artefacts de build..."
           echo "Les builds sont prêts pour être déployés ou récupérés."
 
       - name: Upload Frontend Build Artifact
-        # Archive le build du frontend pour le rendre disponible dans les Artifacts de GitHub Actions
+        # Archive le build du frontend pour le rendre accessible dans les Artifacts de GitHub Actions
         uses: actions/upload-artifact@v2
         with:
           name: frontend-build
           path: frontend/build
 
       - name: Upload Backend Artifact
-        # Archive le build ou le code du backend pour le rendre disponible
+        # Archive le build ou le code du backend pour le rendre accessible
         uses: actions/upload-artifact@v2
         with:
           name: backend-artifact
