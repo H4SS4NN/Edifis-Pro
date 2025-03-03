@@ -1,6 +1,3 @@
-import { describe } from 'node:test';
-import { it } from 'node:test';
-import { expect } from '@jest/globals';
 import request from 'supertest';
 import app from '../server.js';
 
