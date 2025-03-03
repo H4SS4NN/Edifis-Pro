@@ -4,7 +4,7 @@ npm-debug.log
 yarn-error.log
 package-lock.json
 frontend\edifis-pro\package-lock.json
-frontend\edifis-pro\.env
+backend\.env
 
 # Logs
 logs/
