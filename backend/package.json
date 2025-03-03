@@ -1,5 +1,13 @@
 {
+  "name": "backend",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest --coverage"
+  },
   "dependencies": {
+    "backend": "file:",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -9,5 +17,9 @@
     "morgan": "^1.10.0",
     "mysql2": "^3.12.0",
     "sequelize": "^6.37.5"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "nodemon": "^2.0.22"
   }
 }
