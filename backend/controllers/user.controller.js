@@ -7,9 +7,14 @@ require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 // Inscription (Création de compte avec JWT)
 exports.createUser = async (req, res) => {
     try {
+        // Seul un Responsable (role_id = 1) peut créer un utilisateur
+        if (req.user.role !== 1) {
+            return res.status(403).json({ message: "Accès refusé. Seul un Responsable peut créer un utilisateur" });
+        }
+
         const { firstname, lastname, email, password, role_id } = req.body;
 
-        if (!firstname || !lastname || !email || !password) {
+        if (!firstname || !lastname || !email || !password || !role_id) {
             return res.status(400).json({ message: "Tous les champs sont requis" });
         }
 
@@ -27,14 +32,7 @@ exports.createUser = async (req, res) => {
             role_id
         });
 
-        // Générer un token JWT
-        const token = jwt.sign(
-            { userId: user.user_id, role: user.role_id },
-            process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRES_IN }
-        );
-
-        res.status(201).json({ message: "Utilisateur créé", token, user });
+        res.status(201).json({ message: "Utilisateur créé avec succès", user });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

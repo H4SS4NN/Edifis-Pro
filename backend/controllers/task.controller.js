@@ -1,4 +1,5 @@
 const Task = require("../models/Task");
+const User = require("../models/User");
 
 // CRUD identique à `users`
 exports.createTask = async (req, res) => {
@@ -48,6 +49,32 @@ exports.deleteTask = async (req, res) => {
 
         await task.destroy();
         res.json({ message: "Tâche supprimée" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
+
+// Assigner une tâche à un ouvrier
+exports.assignTask = async (req, res) => {
+    try {
+        const { taskId, userId } = req.body;
+
+        if (!taskId || !userId) {
+            return res.status(400).json({ message: "L'ID de la tâche et de l'utilisateur sont requis" });
+        }
+
+        const task = await Task.findByPk(taskId);
+        if (!task) return res.status(404).json({ message: "Tâche non trouvée" });
+
+        const user = await User.findByPk(userId);
+        if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
+
+        task.user_id = userId;
+        await task.save();
+
+        res.json({ message: "Tâche assignée avec succès", task });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

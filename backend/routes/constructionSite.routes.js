@@ -8,4 +8,6 @@ router.get("/:id", constructionSiteController.getConstructionSiteById);
 router.put("/:id", constructionSiteController.updateConstructionSite);
 router.delete("/:id", constructionSiteController.deleteConstructionSite);
 
+router.post("/assign", protect, isAdmin, constructionSiteController.assignConstructionSite);
+
 module.exports = router;

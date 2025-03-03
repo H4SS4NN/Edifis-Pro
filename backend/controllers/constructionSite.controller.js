@@ -1,4 +1,6 @@
 const ConstructionSite = require("../models/ConstructionSite");
+const User = require("../models/User");
+
 
 // Créer un chantier
 exports.createConstructionSite = async (req, res) => {
@@ -52,6 +54,33 @@ exports.deleteConstructionSite = async (req, res) => {
 
         await site.destroy();
         res.json({ message: "Chantier supprimé" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
+// Assigner un chantier à un chef de chantier
+exports.assignConstructionSite = async (req, res) => {
+    try {
+        const { siteId, chefId } = req.body;
+
+        if (!siteId || !chefId) {
+            return res.status(400).json({ message: "L'ID du chantier et du chef de chantier sont requis" });
+        }
+
+        const site = await ConstructionSite.findByPk(siteId);
+        if (!site) return res.status(404).json({ message: "Chantier non trouvé" });
+
+        const chef = await User.findByPk(chefId);
+        if (!chef || chef.role_id !== 2) {
+            return res.status(400).json({ message: "L'utilisateur spécifié n'est pas un chef de chantier" });
+        }
+
+        site.chef_id = chefId;
+        await site.save();
+
+        res.json({ message: "Chantier assigné avec succès", site });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

@@ -19,5 +19,11 @@ const protect = (req, res, next) => {
         res.status(401).json({ message: "Token invalide" });
     }
 };
+const isAdmin = (req, res, next) => {
+    if (req.user.role !== 1) {
+        return res.status(403).json({ message: "Accès refusé. Seul un Responsable peut créer un utilisateur" });
+    }
+    next();
+};
 
-module.exports = protect;
+module.exports = { protect, isAdmin };

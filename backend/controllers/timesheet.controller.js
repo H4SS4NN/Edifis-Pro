@@ -56,3 +56,46 @@ exports.deleteTimesheet = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+
+exports.clockIn = async (req, res) => {
+    try {
+        const { userId } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({ message: "L'ID utilisateur est requis" });
+        }
+
+        const timesheet = await Timesheet.create({
+            user_id: userId,
+            start_date: new Date()
+        });
+
+        res.json({ message: "Heure d'entrée enregistrée", timesheet });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.clockOut = async (req, res) => {
+    try {
+        const { userId } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({ message: "L'ID utilisateur est requis" });
+        }
+
+        const timesheet = await Timesheet.findOne({
+            where: { user_id: userId, end_date: null }
+        });
+
+        if (!timesheet) return res.status(400).json({ message: "Aucune entrée trouvée pour cet utilisateur" });
+
+        timesheet.end_date = new Date();
+        await timesheet.save();
+
+        res.json({ message: "Heure de sortie enregistrée", timesheet });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
