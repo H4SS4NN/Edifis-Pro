@@ -12,7 +12,7 @@ const routes = [
     { to: "/", label: "Accueil", Icon: House },
     { to: "/missions", label: "Mission", Icon: Hammer },
     { to: "/clients", label: "Clients", Icon: FolderClosed },
-    { to: "/chantiers", label: "Chantiers", Icon: Construction },
+    { to: "/construction", label: "Chantiers", Icon: Construction },
     { to: "/worker", label: "Employés", Icon: UserRound },
 ]
 
