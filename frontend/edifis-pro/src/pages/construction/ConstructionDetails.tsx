@@ -5,8 +5,9 @@ export default function ConstructionDetails() {
     const [isEditing, setIsEditing] = useState(false);
     const [construction, setConstruction] = useState({
         name: "Chantier Tour Azure",
-        state: "En cours",
+        state: "En retard",
         description: "Projet de construction d'une tour résidentielle moderne.",
+        chef_projet: "Phillipo Dingo",
         adresse: "12 rue des Bâtisseurs, Lyon",
         start_date: "2024-03-01",
         end_date: "2024-06-30",
@@ -111,6 +112,7 @@ export default function ConstructionDetails() {
                         <p><strong>Début :</strong> {isEditing ? <input type="date" name="start_date" value={construction.start_date} onChange={handleChange} className="border border-gray-300 rounded p-1" /> : construction.start_date}</p>
                         <p><strong>Fin :</strong> {isEditing ? <input type="date" name="end_date" value={construction.end_date} onChange={handleChange} className="border border-gray-300 rounded p-1" /> : construction.end_date}</p>
                         <p><strong>Horaires :</strong> {isEditing ? <><input type="time" name="open_time" value={construction.open_time} onChange={handleChange} className="border border-gray-300 rounded p-1" /> - <input type="time" name="end_time" value={construction.end_time} onChange={handleChange} className="border border-gray-300 rounded p-1" /></> : `${construction.open_time} - ${construction.end_time}`}</p>
+                        <p><strong>Chef de projet :</strong> {isEditing ? <input type="text" name="chef_projet" value={construction.chef_projet} onChange={handleChange} className="border border-gray-300 rounded p-1" /> : construction.chef_projet}</p> 
                         <p><strong>Date de création :</strong> {construction.date_creation}</p>
                     </div>
 
