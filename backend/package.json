@@ -19,6 +19,7 @@
     "sequelize": "^6.37.5"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/supertest": "^2.0.16",
