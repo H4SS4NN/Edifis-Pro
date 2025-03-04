@@ -8,6 +8,7 @@ import Profile from "./pages/profile/Profile";
 import Worker from "./pages/worker/Worker";
 import AddWorker from "./pages/worker/AddWorker";
 import NotFound from "./pages/notFound/NotFound";
+import Construction from "./pages/construction/Construction";
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
                 <Route path="/worker" element={<Worker />} />
                 <Route path="/AddWorker" element={<AddWorker />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/construction" element={<Construction />} />
             </Route>
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<NotFound />} />
