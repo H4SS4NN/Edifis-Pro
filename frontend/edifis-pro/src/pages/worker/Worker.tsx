@@ -38,8 +38,8 @@ export default function Workers() {
                     onChange={(e) => setFilter(e.target.value)}
                 >
                     <option value="all">Tous</option>
-                    <option value="updated">Mis à jour</option>
-                    <option value="pending">En attente</option>
+                    <option value="updated">Disponible</option>
+                    <option value="pending">Occupé</option>
                 </select>
             </div>
 
@@ -56,7 +56,7 @@ export default function Workers() {
                         <p className="text-sm text-gray-500">{worker.phone}</p>
                         <p className="text-sm text-gray-500">{worker.email}</p>
                         <span className={`mt-2 px-3 py-1 rounded-md text-sm ${worker.status === "updated" ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"}`}>
-                            {worker.status === "updated" ? "Mis à jour" : "En attente..."}
+                            {worker.status === "updated" ? "Disponible" : "Occupé"}
                         </span>
                     </div>
                 ))}

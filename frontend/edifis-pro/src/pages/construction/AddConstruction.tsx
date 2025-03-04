@@ -12,11 +12,15 @@ export default function AddConstruction() {
         status: "En cours",
         startDate: "",
         endDate: "",
-        image: ""
+        image: null
     });
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value, type, files } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === "file" ? files[0] : value
+        }));
     };
 
     const handleSubmit = (e) => {
@@ -34,15 +38,27 @@ export default function AddConstruction() {
                     <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange} className="w-full p-3 border rounded" required></textarea>
                     <input type="text" name="site" placeholder="Nom du site" value={formData.site} onChange={handleChange} className="w-full p-3 border rounded" required />
                     <input type="text" name="address" placeholder="Adresse" value={formData.address} onChange={handleChange} className="w-full p-3 border rounded" required />
-                    <input type="text" name="manager" placeholder="Chef de chantier" value={formData.manager} onChange={handleChange} className="w-full p-3 border rounded" required />
+                    
+                    <select name="manager" value={formData.manager} onChange={handleChange} className="w-full p-3 border rounded" required>
+                        <option value="">Sélectionner un chef de chantier</option>
+                        <option value="Marc Dupont">Marc Dupont</option>
+                        <option value="Sophie Lemoine">Sophie Lemoine</option>
+                        <option value="Julien Morel">Julien Morel</option>
+                    </select>
+                    
                     <select name="status" value={formData.status} onChange={handleChange} className="w-full p-3 border rounded">
                         <option value="En cours">En cours</option>
                         <option value="Terminé">Terminé</option>
                         <option value="En retard">En retard</option>
                     </select>
-                    <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} className="w-full p-3 border rounded" required />
-                    <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} className="w-full p-3 border rounded" required />
-                    <input type="url" name="image" placeholder="URL de l'image" value={formData.image} onChange={handleChange} className="w-full p-3 border rounded" />
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                        <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} className="w-full p-3 border rounded" required />
+                        <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} className="w-full p-3 border rounded" required />
+                    </div>
+                    
+                    <input type="file" name="image" onChange={handleChange} className="w-full p-3 border rounded" />
+                    
                     <button type="submit" className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition">Ajouter</button>
                 </form>
             </div>
