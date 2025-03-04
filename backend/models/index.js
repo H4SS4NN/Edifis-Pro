@@ -13,8 +13,9 @@ User.belongsTo(Role, { foreignKey: "role_id" });
 Role.hasMany(User, { foreignKey: "role_id" });
 
 // Un utilisateur peut être assigné à plusieurs tâches
-User.hasMany(Task, { foreignKey: "user_id" });
-Task.belongsTo(User, { foreignKey: "user_id" });
+User.belongsToMany(Task, { through: "user_tasks", foreignKey: "user_id" });
+Task.belongsToMany(User, { through: "user_tasks", foreignKey: "task_id" });
+
 
 // Un chantier peut contenir plusieurs tâches
 ConstructionSite.hasMany(Task, { foreignKey: "construction_site_id" });
