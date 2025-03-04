@@ -56,25 +56,25 @@ exports.deleteTask = async (req, res) => {
 
 
 
-// Assigner une tâche à un ouvrier
-exports.assignTask = async (req, res) => {
+// Assigner plusieurs utilisateurs à une tâche
+exports.assignUsersToTask = async (req, res) => {
     try {
-        const { taskId, userId } = req.body;
+        const { taskId, userIds } = req.body;
 
-        if (!taskId || !userId) {
-            return res.status(400).json({ message: "L'ID de la tâche et de l'utilisateur sont requis" });
+        if (!taskId || !userIds || userIds.length === 0) {
+            return res.status(400).json({ message: "L'ID de la tâche et au moins un utilisateur sont requis" });
         }
 
         const task = await Task.findByPk(taskId);
         if (!task) return res.status(404).json({ message: "Tâche non trouvée" });
 
-        const user = await User.findByPk(userId);
-        if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
+        const users = await User.findAll({ where: { user_id: userIds } });
+        if (users.length !== userIds.length) return res.status(400).json({ message: "Un ou plusieurs utilisateurs sont invalides" });
 
-        task.user_id = userId;
-        await task.save();
+        // Assigner les utilisateurs à la tâche
+        await task.addUsers(users);
 
-        res.json({ message: "Tâche assignée avec succès", task });
+        res.json({ message: "Tâche assignée à plusieurs utilisateurs avec succès", task });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
