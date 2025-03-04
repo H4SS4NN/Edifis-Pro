@@ -33,10 +33,10 @@ export default function Header() {
                 >
                     Contact
                 </Link>
-                <Link to="/login" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm transition-colors disabled:pointer-events-none disabled:opacity-50 bg-slate-200 text-zinc-950 hover:bg-slate-300 h-9 px-4 py-2">Se connecter</Link>
                 <Link to="/profile" className="relative flex h-9 w-9 shrink-0 overflow-hidden rounded-[20px] transition-all duration-300 ease-in-out hover:rounded-xl cursor-pointer">
                     <img className="aspect-square h-full w-full" src="https://github.com/shadcn.png" alt="photo de profil" />
                 </Link>
+                <span className="text-sm">John Doe</span>
             </div>
         </header>
     );
