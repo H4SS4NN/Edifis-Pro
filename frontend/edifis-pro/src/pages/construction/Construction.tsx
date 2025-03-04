@@ -46,7 +46,7 @@ export default function Home() {
 
             <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
                 {projects.map((project, index) => (
-                    <div key={index} className="max-w-100 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div key={index} className="md:w-100% bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
                         <img className="w-full h-48 object-cover" src={project.image} alt={project.name} />
                         <div className="p-5">
                             <h5 className="text-2xl font-bold text-gray-900 mb-2">{project.name}</h5>
