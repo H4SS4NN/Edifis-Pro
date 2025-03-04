@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const constructionSiteController = require("../controllers/constructionSite.controller");
+const { protect, isAdmin } = require("../middlewares/auth.middleware");
 
 router.post("/", constructionSiteController.createConstructionSite);
 router.get("/", constructionSiteController.getAllConstructionSites);
