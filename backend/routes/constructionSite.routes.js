@@ -8,6 +8,8 @@ router.get("/", constructionSiteController.getAllConstructionSites);
 router.get("/:id", constructionSiteController.getConstructionSiteById);
 router.put("/:id", constructionSiteController.updateConstructionSite);
 router.delete("/:id", constructionSiteController.deleteConstructionSite);
+router.get("/user/:userId", protect, constructionSiteController.getConstructionSitesByUserId);
+
 
 router.post("/assign", protect, isAdmin, constructionSiteController.assignConstructionSite);
 

@@ -69,13 +69,16 @@ exports.assignUsersToTask = async (req, res) => {
         if (!task) return res.status(404).json({ message: "Tâche non trouvée" });
 
         const users = await User.findAll({ where: { user_id: userIds } });
-        if (users.length !== userIds.length) return res.status(400).json({ message: "Un ou plusieurs utilisateurs sont invalides" });
+        if (users.length !== userIds.length) {
+            return res.status(400).json({ message: "Un ou plusieurs utilisateurs sont invalides" });
+        }
 
-        // Assigner les utilisateurs à la tâche
+        // ⚡ Ajoute les utilisateurs à la tâche via la table pivot `user_tasks`
         await task.addUsers(users);
 
-        res.json({ message: "Tâche assignée à plusieurs utilisateurs avec succès", task });
+        res.json({ message: "Tâche assignée avec succès", task });
     } catch (error) {
+        console.error("Erreur lors de l'assignation des utilisateurs :", error);
         res.status(500).json({ error: error.message });
     }
 };

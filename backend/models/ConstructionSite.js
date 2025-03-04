@@ -37,6 +37,10 @@ const ConstructionSite = sequelize.define("construction_site", {
     type: DataTypes.DATEONLY,
     defaultValue: DataTypes.NOW,
   },
+  image_url: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = ConstructionSite;

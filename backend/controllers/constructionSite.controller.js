@@ -1,5 +1,9 @@
 const ConstructionSite = require("../models/ConstructionSite");
 const User = require("../models/User");
+const Task = require("../models/Task");
+const fs = require("fs");
+const path = require("path");
+
 
 
 // Créer un chantier
@@ -85,3 +89,81 @@ exports.assignConstructionSite = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+// Mettre à jour l’image du chantier
+exports.updateConstructionImage = async (req, res) => {
+    try {
+        const { siteId } = req.body;
+        if (!req.file) {
+            return res.status(400).json({ message: "Aucune image envoyée" });
+        }
+
+        const site = await ConstructionSite.findByPk(siteId);
+        if (!site) {
+            return res.status(404).json({ message: "Chantier non trouvé" });
+        }
+
+        // Supprimer l'ancienne image si elle existe
+        if (site.image_url) {
+            const oldImagePath = path.join(__dirname, "../uploads/construction_sites", site.image_url);
+            if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath);
+            }
+        }
+
+        // Mettre à jour le chantier avec la nouvelle image
+        site.image_url = req.file.filename;
+        await site.save();
+
+        res.json({ message: "Image du chantier mise à jour avec succès", image_url: site.image_url });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
+
+
+
+exports.getConstructionSitesByUserId = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        // Vérifier si l'utilisateur existe
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        // Récupérer tous les chantiers liés aux tâches de l'utilisateur
+        const sites = await ConstructionSite.findAll({
+            attributes: [
+                "construction_site_id", "name", "state", "description",
+                "adresse", "start_date", "end_date", "open_time", "end_time", "date_creation", "image_url"
+            ],
+            include: [
+                {
+                    model: Task,
+                    attributes: ["task_id", "name", "description", "status", "start_date", "end_date"],
+                    include: [
+                        {
+                            model: User,
+                            attributes: [], // Ne pas afficher les infos utilisateur
+                            through: { attributes: [] }, // Supprime la table pivot user_tasks
+                            where: { user_id: userId } // Filtrer les tâches de cet utilisateur
+                        }
+                    ]
+                }
+            ]
+        });
+
+        if (!sites.length) {
+            return res.status(404).json({ message: "Aucun chantier trouvé pour cet utilisateur" });
+        }
+
+        res.json(sites);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des chantiers de l'utilisateur :", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+

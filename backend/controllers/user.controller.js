@@ -4,6 +4,9 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 const fs = require("fs");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
+const Role = require("../models/Role");
+const Competence = require("../models/Competence");
+const { Op } = require("sequelize");
 
 // Inscription (Création de compte avec JWT)
 exports.createUser = async (req, res) => {
@@ -72,16 +75,64 @@ exports.login = async (req, res) => {
 };
 
 // Récupérer tous les utilisateurs (sans afficher le mot de passe)
+// exports.getAllUsers = async (req, res) => {
+//     try {
+//         const users = await User.findAll({
+//             attributes: { exclude: ["password"] }
+//         });
+//         res.json(users);
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// };
+
+
+
+
+// Récupérer tous les utilisateurs sauf ceux avec `role_id = 1` (Responsables)
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await User.findAll({
-            attributes: { exclude: ["password"] }
+            attributes: ["user_id", "firstname", "lastname", "email", "numberphone", "profile_picture"],
+            where: {
+                role_id: { [Op.ne]: 1 } // Exclure les Responsables
+            },
+            include: [
+                {
+                    model: Role,
+                    attributes: ["name"],
+                },
+                {
+                    model: Competence,
+                    attributes: ["name"],
+                    through: { attributes: [] }
+                }
+            ]
         });
-        res.json(users);
+
+        if (!users.length) {
+            return res.status(404).json({ message: "Aucun utilisateur trouvé (hors responsables)" });
+        }
+
+        const formattedUsers = users.map(user => ({
+            id: user.user_id,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            email: user.email,
+            phone: user.numberphone,
+            role: user.Role ? user.Role.name : "Aucun rôle",
+            competences: user.Competences ? user.Competences.map(comp => comp.name).join(", ") : "",
+            profile_picture: user.profile_picture ? `/uploads/profile_pictures/${user.profile_picture}` : null,
+        }));
+
+        res.json(formattedUsers);
     } catch (error) {
+        console.error("Erreur lors de la récupération des utilisateurs :", error);
         res.status(500).json({ error: error.message });
     }
 };
+
+
 
 // Récupérer un utilisateur par ID (sans afficher le mot de passe)
 exports.getUserById = async (req, res) => {
