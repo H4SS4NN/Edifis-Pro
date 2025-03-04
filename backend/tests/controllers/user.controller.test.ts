@@ -1,4 +1,4 @@
-// ca va tester les fonctions du controller user.controller.ts
+// ca va tester les fonctions du controller user.controller.ts 
 jest.mock("jsonwebtoken", () => ({
     sign: jest.fn(),
   }));
