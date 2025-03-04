@@ -46,7 +46,7 @@ export default function Home() {
 
             <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
                 {projects.map((project, index) => (
-                    <div key={index} className="max-w-100 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div key={index} className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
                         <img className="w-full h-48 object-cover" src={project.image} alt={project.name} />
                         <div className="p-5">
                             <h5 className="text-2xl font-bold text-gray-900 mb-2">{project.name}</h5>
@@ -57,7 +57,7 @@ export default function Home() {
                             <p className="text-sm text-gray-600"><strong>🚩 Status :</strong> <span className={project.status === "En retard" ? "text-red-500 font-bold" : "text-green-600 font-bold"}>{project.status}</span></p>
                             <p className="text-sm text-gray-600"><strong>📅 Début :</strong> {project.startDate}</p>
                             <p className="text-sm text-gray-600 mb-4"><strong>⏳ Fin :</strong> {project.endDate}</p>
-                            <Link to="/ConstructionDetails" className="inline-flex items-center px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">
+                            <Link to="/ConstructionDetails" className="inline-flex items-center px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 mt-auto transition">
                                 Voir plus
                                 <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

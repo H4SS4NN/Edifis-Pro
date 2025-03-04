@@ -46,7 +46,7 @@ const tasks: Task[] = [
 
 export default function Home() {
     return (
-        <main className="min-h-[calc(100dvh-65px)] md:p-8 p-4">
+        <main className="min-h-[calc(100dvh-65px)] bg-gray-100 md:p-8 p-4">
             <div className="mb-10">
                 <h1 className="text-4xl font-bold text-slate-950">Bienvenue, John Doe</h1>
                 <p className="text-sm text-slate-500">Voici un aperçu de votre tableau de bord</p>

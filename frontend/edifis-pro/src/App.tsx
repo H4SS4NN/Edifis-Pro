@@ -1,5 +1,8 @@
 import { Routes, Route } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import "./App.css";
+
+import { useAuth } from "./context/AuthContext";
 
 import PageLayout from "./layout/PageLayout";
 import Login from "./pages/login/Login";
@@ -13,19 +16,26 @@ import AddConstruction from "./pages/construction/AddConstruction"
 import ConstructionDetails from "./pages/construction/ConstructionDetails"
 
 function App() {
+    const { isAuthenticated } = useAuth();
+
     return (
         <Routes>
-            <Route element={<PageLayout />}>
-                <Route path="/" element={<Home />} />
-                <Route path="/worker" element={<Worker />} />
-                <Route path="/AddWorker" element={<AddWorker />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/construction" element={<Construction />} />
-                <Route path="/ConstructionDetails" element={<ConstructionDetails />} />
-                <Route path="/AddConstruction" element={<AddConstruction />} />
-            </Route>
+            {isAuthenticated && (
+                <>
+                    <Route element={<PageLayout />}>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/worker" element={<Worker />} />
+                        <Route path="/AddWorker" element={<AddWorker />} />
+                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/construction" element={<Construction />} />
+                        <Route path="/ConstructionDetails" element={<ConstructionDetails />} />
+                        <Route path="/AddConstruction" element={<AddConstruction />} />
+                    </Route>
+                    <Route path="*" element={<NotFound />} />
+                </>
+            )}
+            <Route path="*" element={<Navigate to="/login" />} />
             <Route path="/login" element={<Login />} />
-            <Route path="*" element={<NotFound />} />
         </Routes>
     )
 }
