@@ -57,7 +57,7 @@ jobs:
 
       - name: Install dependencies and run frontend tests
         # Passe dans le dossier frontend, installe les dépendances et lance les tests
-        working-directory: frontend
+        working-directory: frontend/edifis-pro
         run: |
           npm install                 # Installe les dépendances du frontend
           npm run test                # Exécute les tests définis dans package.json du frontend
@@ -81,7 +81,7 @@ jobs:
 
       - name: Build Frontend
         # Construit l'application frontend (React)
-        working-directory: frontend
+        working-directory: frontend/edifis-pro
         run: |
           npm install                 # Installe les dépendances du frontend
           npm run build               # Compile l'application React en mode production
