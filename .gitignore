@@ -6,6 +6,8 @@ package-lock.json
 frontend\edifis-pro\package-lock.json
 frontend\edifis-pro\.env
 
+pnpm-lock.yaml
+
 # Logs
 logs/
 *.log
@@ -29,7 +31,6 @@ jspm_packages/
 # dotenv environment variables file
 .env
 
-
 # IDEs and editors
 .vscode/
 .idea/
@@ -38,9 +39,6 @@ jspm_packages/
 *.njsproj
 *.sln
 *.sw?
-
-
-
 
 # Build directories
 dist/
