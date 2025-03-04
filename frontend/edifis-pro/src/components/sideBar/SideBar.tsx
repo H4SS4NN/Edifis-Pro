@@ -20,15 +20,17 @@ export default function SideBar() {
     const location = useLocation()
     return (
         <aside className="fixed top-0 left-0 flex flex-col justify-between h-dvh w-[250px] bg-white border-r border-slate-200 pt-16 md:transform md:translate-x-0 transform -translate-x-full">
-            <ul className="space-y-1.5 p-4">
-                {routes.map(({ to, label, Icon }) => (
-                    <li
-                        key={to}
-                        className={`flex items-center space-x-2 h-8 transition-colors px-2.5 rounded-md cursor-pointer ${location.pathname === to ? "bg-slate-200" : "bg-transparent hover:bg-slate-200"}`}
-                    >
-                        <Icon size={18} />
-                        <Link to={to} className="text-slate-950 text-sm">{label}</Link>
-                    </li>
+            <ul className="flex flex-col space-y-1.5 p-4">
+                {routes.map(({ to, label, Icon }, index) => (
+                    <Link to={to}>
+                        <li
+                            key={index}
+                            className={`flex items-center space-x-2 h-8 transition-colors px-2.5 rounded-md cursor-pointer ${location.pathname === to ? "bg-slate-200" : "bg-transparent hover:bg-slate-200"}`}
+                        >
+                            <Icon size={18} />
+                            <span className="text-slate-950 text-sm">{label}</span>
+                        </li>
+                    </Link>
                 ))}
             </ul>
             <div className="p-4">
