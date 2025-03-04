@@ -2,7 +2,6 @@
   "name": "edifis-pro",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -11,6 +10,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.9",
+    "edifis-pro": "file:",
     "lucide-react": "^0.477.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

@@ -5,6 +5,8 @@ import PageLayout from "./layout/PageLayout";
 import Login from "./pages/login/Login";
 import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
+import Worker from "./pages/worker/Worker";
+import AddWorker from "./pages/worker/AddWorker";
 import NotFound from "./pages/notFound/NotFound";
 
 function App() {
@@ -12,6 +14,8 @@ function App() {
         <Routes>
             <Route element={<PageLayout />}>
                 <Route path="/" element={<Home />} />
+                <Route path="/worker" element={<Worker />} />
+                <Route path="/AddWorker" element={<AddWorker />} />
                 <Route path="/profile" element={<Profile />} />
             </Route>
             <Route path="/login" element={<Login />} />
