@@ -29,7 +29,8 @@ jspm_packages/
 # dotenv environment variables file
 .env
 
-
+backend/uploads/constructionsites/*
+backend/uploads/profile_pictures/*
 # IDEs and editors
 .vscode/
 .idea/
