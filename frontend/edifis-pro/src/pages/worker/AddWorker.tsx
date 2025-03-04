@@ -36,7 +36,7 @@ export default function AddWorker() {
 
     return (
         <main className="min-h-[calc(100dvh-65px)] md:p-8 p-4">
-            <h1 className="text-4xl font-bold text-slate-950">Ajouter un Ouvrier</h1>
+            <h1 className="text-4xl font-bold text-slate-950">Ajouter un employé</h1>
             <p className="text-sm text-slate-500 mb-4">Remplissez les informations ci-dessous</p>
             <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-lg">
                 <div>

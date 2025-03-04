@@ -39,7 +39,11 @@ export default function Home() {
 
     return (
         <main className="min-h-screen p-8 bg-gray-100">
-            <h1 className="text-4xl font-bold text-gray-900 mb-6">Chantiers</h1>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-4xl font-bold text-gray-900">Chantiers</h1>
+                <Link to="/AddConstruction" className="text-gray-900 bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-red-100 dark:focus:ring-red-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Ajouter</Link>
+            </div>
+
             <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
                 {projects.map((project, index) => (
                     <div key={index} className="max-w-100 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
