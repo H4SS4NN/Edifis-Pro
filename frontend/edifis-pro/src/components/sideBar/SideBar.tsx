@@ -13,7 +13,7 @@ const routes = [
     { to: "/missions", label: "Mission", Icon: Hammer },
     { to: "/clients", label: "Clients", Icon: FolderClosed },
     { to: "/chantiers", label: "Chantiers", Icon: Construction },
-    { to: "/employés", label: "Employés", Icon: UserRound },
+    { to: "/worker", label: "Employés", Icon: UserRound },
 ]
 
 export default function SideBar() {
