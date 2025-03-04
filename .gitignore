@@ -3,7 +3,11 @@ node_modules/
 npm-debug.log
 yarn-error.log
 package-lock.json
-frontend\edifis-pro\package-lock.json
+frontend/edifis-pro/package-lock.json
+frontend/edifis-pro/.env
+backend/coverage
+
+pnpm-lock.yaml
 
 # Logs
 logs/
@@ -28,7 +32,6 @@ jspm_packages/
 # dotenv environment variables file
 .env
 
-
 # IDEs and editors
 .vscode/
 .idea/
@@ -37,9 +40,6 @@ jspm_packages/
 *.njsproj
 *.sln
 *.sw?
-
-
-
 
 # Build directories
 dist/
