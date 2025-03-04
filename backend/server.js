@@ -23,6 +23,9 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
+app.use("/uploads/profile_pictures", express.static("uploads/profile_pictures"));
+app.use("/uploads/construction_sites", express.static("uploads/construction_sites"));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

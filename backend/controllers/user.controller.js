@@ -2,6 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const path = require("path");
+const fs = require("fs");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 
 // Inscription (Création de compte avec JWT)
@@ -109,6 +110,37 @@ exports.updateUser = async (req, res) => {
 
         await user.update(req.body);
         res.json({ message: "Utilisateur mis à jour", user });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Mettre à jour l’image de profil
+exports.updateProfilePicture = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        if (!req.file) {
+            return res.status(400).json({ message: "Aucune image envoyée" });
+        }
+
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        // Supprimer l'ancienne image si elle existe
+        if (user.profile_picture) {
+            const oldImagePath = path.join(__dirname, "../uploads/profile_pictures", user.profile_picture);
+            if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath);
+            }
+        }
+
+        // Mettre à jour l'utilisateur avec la nouvelle image
+        user.profile_picture = req.file.filename;
+        await user.save();
+
+        res.json({ message: "Image de profil mise à jour avec succès", profile_picture: user.profile_picture });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
