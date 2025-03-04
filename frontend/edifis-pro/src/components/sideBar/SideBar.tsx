@@ -19,7 +19,6 @@ const routes = [
 export default function SideBar() {
     const location = useLocation()
     return (
-        // <aside className="h-full w-[250px] bg-white border-r border-slate-200">
         <aside className="fixed top-0 left-0 flex flex-col justify-between h-dvh w-[250px] bg-white border-r border-slate-200 pt-16 md:transform md:translate-x-0 transform -translate-x-full">
             <ul className="space-y-1.5 p-4">
                 {routes.map(({ to, label, Icon }) => (

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { useState } from "react"
-import logo from '../../assets/images/logo.svg';
+import logo from '../../assets/images/logo.svg'
 
 export default function Login() {
     const [formData, setFormData] = useState({
