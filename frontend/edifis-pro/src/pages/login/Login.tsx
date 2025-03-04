@@ -37,7 +37,7 @@ export default function Login() {
                             <Link to='/' className="flex justify-center items-center text-2xl font-semibold text-slate-950 uppercase">
                                 Edifis <span className="font-light">Pro</span>
                             </Link>
-                            <p className="text-sm text-slate-500">Entrer vos identifiants pour vous connecter</p>
+                            <p className="text-sm text-slate-500">Entrez vos identifiants pour vous connecter</p>
                         </div>
                         <div className="grid gap-6">
                             <form>
@@ -52,7 +52,7 @@ export default function Login() {
                                 </div>
                             </form>
                         </div>
-                        <p className="px-8 text-center text-sm text-slate-500 ">En cliquant sur continuer, vous acceptez <a className="underline underline-offset-4 hover:text-slate-950 <<<<<< transition-colors" href="/terms">nos conditions d'utilisation</a> et <a className="underline underline-offset-4 hover:text-slate-950 transition-colors" href="/privacy">notre politique de confidentialité</a>.
+                        <p className="px-8 text-center text-sm text-slate-500 ">En cliquant "Se connecter", vous acceptez <a className="underline underline-offset-4 hover:text-slate-950 <<<<<< transition-colors" href="/terms">nos conditions d'utilisation</a> et <a className="underline underline-offset-4 hover:text-slate-950 transition-colors" href="/privacy">notre politique de confidentialité</a>.
                         </p>
                     </div>
                 </div>
