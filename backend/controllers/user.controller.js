@@ -16,24 +16,30 @@ exports.createUser = async (req, res) => {
             return res.status(403).json({ message: "Accès refusé. Seul un Responsable peut créer un utilisateur" });
         }
 
-        const { firstname, lastname, email, password, role_id } = req.body;
+        const { firstname, lastname, email, password, role_id, numberphone } = req.body;
 
-        if (!firstname || !lastname || !email || !password || !role_id) {
-            return res.status(400).json({ message: "Tous les champs sont requis" });
+        // Vérifier que tous les champs sont fournis
+        if (!firstname || !lastname || !email || !password || !role_id || !numberphone) {
+            return res.status(400).json({ message: "Tous les champs sont requis, y compris le numéro de téléphone" });
         }
 
+        // Vérifier si l'email existe déjà
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
             return res.status(400).json({ message: "Cet email est déjà utilisé" });
         }
 
+        // Hacher le mot de passe avant l'insertion
         const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Création de l'utilisateur
         const user = await User.create({
             firstname,
             lastname,
             email,
             password: hashedPassword,
-            role_id
+            role_id,
+            numberphone  // 👈 Ajout du champ numberphone
         });
 
         res.status(201).json({ message: "Utilisateur créé avec succès", user });
@@ -101,6 +107,7 @@ exports.getAllUsers = async (req, res) => {
                 {
                     model: Role,
                     attributes: ["name"],
+                    required: true,
                 },
                 {
                     model: Competence,
@@ -110,22 +117,16 @@ exports.getAllUsers = async (req, res) => {
             ]
         });
 
+        console.log(JSON.stringify(users, null, 2));
+
+
+
         if (!users.length) {
             return res.status(404).json({ message: "Aucun utilisateur trouvé (hors responsables)" });
         }
 
-        const formattedUsers = users.map(user => ({
-            id: user.user_id,
-            firstname: user.firstname,
-            lastname: user.lastname,
-            email: user.email,
-            phone: user.numberphone,
-            role: user.Role ? user.Role.name : "Aucun rôle",
-            competences: user.Competences ? user.Competences.map(comp => comp.name).join(", ") : "",
-            profile_picture: user.profile_picture ? `/uploads/profile_pictures/${user.profile_picture}` : null,
-        }));
+        res.json(users);
 
-        res.json(formattedUsers);
     } catch (error) {
         console.error("Erreur lors de la récupération des utilisateurs :", error);
         res.status(500).json({ error: error.message });

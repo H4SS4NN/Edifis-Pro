@@ -77,7 +77,7 @@ exports.assignConstructionSite = async (req, res) => {
         if (!site) return res.status(404).json({ message: "Chantier non trouvé" });
 
         const chef = await User.findByPk(chefId);
-        if (!chef || chef.role_id !== 2) {
+        if (!chef || chef.role_id !== 3) {
             return res.status(400).json({ message: "L'utilisateur spécifié n'est pas un chef de chantier" });
         }
 
