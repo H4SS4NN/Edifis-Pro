@@ -1,11 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const roleController = require("../controllers/role.controller");
+const { protect, isAdmin } = require("../middlewares/auth.middleware");
 
-router.post("/", roleController.createRole);
-router.get("/", roleController.getAllRoles);
-router.get("/:id", roleController.getRoleById);
-router.put("/:id", roleController.updateRole);
-router.delete("/:id", roleController.deleteRole);
+// 🚀 Mettre à jour le rôle d'un utilisateur (seul un Responsable peut le faire)
+router.put("/update-role", protect, isAdmin, roleController.updateUserRole);
 
 module.exports = router;
