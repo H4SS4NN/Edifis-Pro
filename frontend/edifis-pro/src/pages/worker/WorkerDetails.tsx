@@ -1,108 +1,211 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import userService, { User } from "../../../services/userService";
 
-interface Worker {
-  name: string;
-  skills: string[];
-  phone: string;
-  email: string;
-  role: "Ouvrier" | "Chef de projet";
-  image?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+// URL d'image par défaut
+const DEFAULT_IMAGE =
+  "https://www.capcampus.com/img/u/1/job-etudiant-batiment.jpg";
 
-const workers: Worker[] = [
-  { name: "Jane Cooper", skills: ["Assidu", "meilleur"], phone: "06 73 43 11 27", email: "jane@microsoft.com", role: "Ouvrier", image: "https://f.hellowork.com/obs-static-images/seo/ObsJob/ouvrier-voiries-et-reseaux-divers.jpg", createdAt: "2023-01-01", updatedAt: "2023-01-10" },
-  { name: "Floyd Miles", skills: ["Sympa"], phone: "07 77 45 53 23", email: "floyd@yahoo.com", role: "Ouvrier", image: "https://www.capcampus.com/img/u/1/job-etudiant-batiment.jpg", createdAt: "2023-02-01", updatedAt: "2023-02-05" },
-  { name: "Ronald Richards", skills: ["Pointilleux"], phone: "06 00 89 28 38", email: "ronald@adobe.com", role: "Chef de projet", image: "https://plus.unsplash.com/premium_photo-1664301171216-9e0e0cd8d103?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", createdAt: "2023-03-01", updatedAt: "2023-03-10" },
-  { name: "Marvin McKinney", skills: ["Sympa"], phone: "07 67 87 23 41", email: "marvin@tesla.com", role: "Ouvrier", image: "https://www.meilleur-audio.fr/wp-content/uploads/2019/08/Ouvrier-et-audition.png", createdAt: "2023-04-01", updatedAt: "2023-04-10" },
+// Liste des compétences fixes basées sur la BDD
+const ALL_SKILLS = [
+  { id: 1, name: "Maçonnerie" },
+  { id: 2, name: "Électricité" },
+  { id: 3, name: "Plomberie" },
+  { id: 4, name: "Charpenterie" },
+  { id: 5, name: "Peinture en bâtiment" },
+  { id: 6, name: "Revêtement de sol" },
+  { id: 7, name: "Isolation thermique et acoustique" },
+  { id: 8, name: "Menuiserie" },
+  { id: 9, name: "Serrurerie" },
+  { id: 10, name: "Climatisation et chauffage" },
+  { id: 11, name: "Gestion de projet" },
+  { id: 12, name: "Coordination des équipes" },
+  { id: 13, name: "Lecture de plans" },
+  { id: 14, name: "Sécurité sur chantier" },
 ];
 
 export default function WorkerDetails() {
-  const { name } = useParams<{ name: string }>();
+  const { id } = useParams<{ id: string }>();
+  const [worker, setWorker] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [worker, setWorker] = useState<Worker | undefined>(workers.find(worker => worker.name === name));
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!worker) {
-    return <p>Employé non trouvé</p>;
-  }
+  useEffect(() => {
+    const fetchWorker = async () => {
+      try {
+        const data = await userService.getById(Number(id));
+        setWorker(data);
+      } catch (err) {
+        setError("Erreur lors du chargement des détails de l'employé.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setWorker({
-      ...worker,
-      [e.target.name]: e.target.value,
-    });
+    fetchWorker();
+  }, [id]);
+
+  if (loading)
+    return <p className="text-center text-gray-500">Chargement...</p>;
+  if (error) return <p className="text-center text-red-500">{error}</p>;
+  if (!worker)
+    return <p className="text-center text-gray-500">Employé non trouvé</p>;
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setWorker((prevWorker) =>
+      prevWorker ? { ...prevWorker, [e.target.name]: e.target.value } : null
+    );
   };
 
-  const handleSkillChange = (skill: string) => {
-    const updatedSkills = worker.skills.includes(skill)
-      ? worker.skills.filter(s => s !== skill)
-      : [...worker.skills, skill];
-    setWorker({ ...worker, skills: updatedSkills });
+  const handleSkillChange = (skillId: number) => {
+    if (!worker) return;
+
+    const updatedSkills = worker.competences.some(
+      (c) => c.competence_id === skillId
+    )
+      ? worker.competences.filter((c) => c.competence_id !== skillId)
+      : [
+          ...worker.competences,
+          {
+            competence_id: skillId,
+            name: ALL_SKILLS.find((s) => s.id === skillId)?.name || "",
+          },
+        ];
+
+    setWorker((prevWorker) =>
+      prevWorker ? { ...prevWorker, competences: updatedSkills } : null
+    );
+  };
+
+  const handleSave = async () => {
+    try {
+      await userService.update(worker!.id, worker!);
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Erreur lors de la sauvegarde :", err);
+    }
   };
 
   return (
     <main className="p-8 bg-gray-100">
       <div className="bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Détails de l'employé</h1>
-        
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          Détails de l'employé
+        </h1>
+
         <div className="flex items-center mb-4">
-          <img src={worker.image} alt={worker.name} className="w-24 h-24 object-cover rounded-full mr-4" />
+          <img
+            src={worker.profile_picture || DEFAULT_IMAGE}
+            alt={worker.firstname}
+            className="w-24 h-24 object-cover rounded-full mr-4"
+          />
           <div>
             {isEditing ? (
               <input
                 type="text"
-                name="name"
-                value={worker.name}
+                name="firstname"
+                value={worker.firstname}
                 onChange={handleChange}
                 className="text-xl font-semibold text-gray-900 mb-2 border-b border-gray-300"
               />
             ) : (
-              <h2 className="text-xl font-semibold text-gray-900">{worker.name}</h2>
+              <h2 className="text-xl font-semibold text-gray-900">
+                {worker.firstname} {worker.lastname}
+              </h2>
             )}
-            <p className="text-sm text-gray-600">{worker.skills.join(", ")}</p>
           </div>
         </div>
 
-        <p><strong>Email : </strong> {isEditing ? <input type="text" name="email" value={worker.email} onChange={handleChange} className="border border-gray-300 rounded p-1" /> : worker.email}</p>
-
-        <p><strong>Compétences : </strong>
+        <p>
+          <strong>Email : </strong>
           {isEditing ? (
-            <div className="flex gap-4">
-              <label className="flex items-center">
-                <input type="checkbox" checked={worker.skills.includes("Assidu")} onChange={() => handleSkillChange("Assidu")} className="mr-2" />
-                Assidu
-              </label>
-              <label className="flex items-center">
-                <input type="checkbox" checked={worker.skills.includes("meilleur")} onChange={() => handleSkillChange("meilleur")} className="mr-2" />
-                meilleur
-              </label>
-              <label className="flex items-center">
-                <input type="checkbox" checked={worker.skills.includes("Sympa")} onChange={() => handleSkillChange("Sympa")} className="mr-2" />
-                Sympa
-              </label>
-            </div>
+            <input
+              type="text"
+              name="email"
+              value={worker.email}
+              onChange={handleChange}
+              className="border border-gray-300 rounded p-1"
+            />
           ) : (
-            worker.skills.join(", ")
+            worker.email
           )}
         </p>
 
-        <p><strong>Rôle : </strong> {isEditing ? (
-            <select name="role" value={worker.role} onChange={handleChange} className="border border-gray-300 rounded p-1">
-                <option value="Ouvrier">Ouvrier</option>
-                <option value="Chef de projet">Chef de projet</option>
-            </select>
-            ) : (
-            worker.role
-        )}</p>
+        <p>
+          <strong>Téléphone : </strong>
+          {isEditing ? (
+            <input
+              type="text"
+              name="numberphone"
+              value={worker.numberphone}
+              onChange={handleChange}
+              className="border border-gray-300 rounded p-1"
+            />
+          ) : (
+            worker.numberphone || "Non renseigné"
+          )}
+        </p>
 
-        <p><strong>Date de création : </strong> {worker.createdAt}</p>
-        <p><strong>Date de mise à jour : </strong> {worker.updatedAt}</p>
+        <p>
+          <strong>Rôle : </strong>
+          {isEditing ? (
+            <select
+              name="role"
+              value={worker.role}
+              onChange={handleChange}
+              className="border border-gray-300 rounded p-1"
+            >
+              <option value="Worker">Ouvrier</option>
+              <option value="Manager">Chef de projet</option>
+            </select>
+          ) : worker.role === "Worker" ? (
+            "Ouvrier"
+          ) : (
+            "Chef de projet"
+          )}
+        </p>
+
+        <p>
+          <strong>Compétences :</strong>
+        </p>
+        {isEditing ? (
+          <div className="grid grid-cols-2 gap-2">
+            {ALL_SKILLS.map((skill) => (
+              <label key={skill.id} className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={worker.competences.some(
+                    (c) => c.competence_id === skill.id
+                  )}
+                  onChange={() => handleSkillChange(skill.id)}
+                  className="mr-2"
+                />
+                {skill.name}
+              </label>
+            ))}
+          </div>
+        ) : (
+          <p>
+            {worker.competences.length > 0
+              ? worker.competences.map((c) => c.name).join(", ")
+              : "Non spécifié"}
+          </p>
+        )}
+
+        <p>
+          <strong>Date de création :</strong> {worker.createdAt}
+        </p>
 
         <div className="mt-6 flex justify-between">
           <button
-            onClick={() => setIsEditing(!isEditing)}
+            onClick={() => {
+              if (isEditing) handleSave();
+              setIsEditing(!isEditing);
+            }}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
           >
             {isEditing ? "Enregistrer" : "Modifier"}

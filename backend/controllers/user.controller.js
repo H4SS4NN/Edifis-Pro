@@ -228,7 +228,14 @@ exports.getAllManagers = async (req, res) => {
 exports.getUserById = async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id, {
-            attributes: { exclude: ["password"] }
+            attributes: { exclude: ["password"] },
+            include: [
+                {
+                    model: Competence,
+                    attributes: ["name"],
+                    through: { attributes: [] }
+                }
+            ]
         });
         if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
         res.json(user);
