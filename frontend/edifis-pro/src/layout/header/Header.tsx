@@ -28,7 +28,7 @@ export default function Header() {
                         alt="photo de profil"
                     />
                 </Link>
-                <span className="text-sm">{user.firstname}</span>
+                <span className="text-sm">{user.firstname} {user.lastname}</span>
             </div>
         </header>
     );
