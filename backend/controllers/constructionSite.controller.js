@@ -47,6 +47,51 @@ exports.createConstructionSite = async (req, res) => {
 
 exports.getAllConstructionSites = async (req, res) => {
     try {
+        const { role, userId } = req.user; // ✅ Correction userId
+
+        if (!userId) {
+            return res.status(400).json({ message: "ID utilisateur non défini dans le token" });
+        }
+
+        let whereCondition = {};
+        let includeOptions = [
+            {
+                model: User,
+                as: "chefDeProjet",
+                attributes: ["user_id", "firstname", "lastname", "email"],
+            }
+        ];
+
+        if (role === "Admin") {
+            console.log("Admin - Voir tous les chantiers");
+        }
+
+        
+        else if (role === "Manager") {
+            whereCondition = { chef_de_projet_id: userId };
+        }
+
+        
+        else if (role === "Worker") {
+            console.log("Worker - Voir les chantiers où il a des tâches");
+
+            includeOptions.push({
+                model: Task,
+                as: "Tasks", 
+                attributes: [],
+                required: true,
+                include: [
+                    {
+                        model: User,
+                        attributes: [], // Pas besoin d'afficher les users
+                        through: { attributes: [] }, // Supprime la table pivot user_tasks
+                        where: { user_id: userId } //  Filtrer sur le bon ID utilisateur
+                    }
+                ]
+            });
+        }
+
+        // Récupération des chantiers avec le filtre dynamique
         const sites = await ConstructionSite.findAll({
             attributes: [
                 "construction_site_id",
@@ -60,15 +105,10 @@ exports.getAllConstructionSites = async (req, res) => {
                 "end_time",
                 "date_creation",
                 "image_url",
-                "chef_de_projet_id" // Inclure l'ID du chef de projet
+                "chef_de_projet_id"
             ],
-            include: [
-                {
-                    model: User,
-                    as: "chefDeProjet", // Assurer l'alias correspondant à la relation définie dans Sequelize
-                    attributes: ["user_id", "firstname", "lastname", "email"]
-                }
-            ]
+            where: whereCondition,
+            include: includeOptions
         });
 
         res.json(sites);
@@ -77,6 +117,7 @@ exports.getAllConstructionSites = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 
 // Récupérer un chantier par ID
