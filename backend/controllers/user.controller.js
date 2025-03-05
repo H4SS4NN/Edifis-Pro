@@ -295,7 +295,7 @@ exports.updateProfilePicture = async (req, res) => {
     }
 };
 
-// Supprimer un utilisateur
+
 exports.deleteUser = async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);

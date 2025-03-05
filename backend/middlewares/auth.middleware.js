@@ -39,4 +39,17 @@ const isManager = (req, res, next) => {
     next();
 };
 
-module.exports = { protect, isAdmin, isWorker, isManager };
+const checkAdminOrOwner = (req, res, next) => {
+    const userIdFromToken = req.user.id; // ID extrait du token
+    const userIdFromParams = req.params.id; // ID de la requête
+
+    // Vérifie si l'utilisateur est un admin ou si l'ID correspond
+    if (req.user.role === "Admin" || userIdFromToken === userIdFromParams) {
+        return next();
+    }
+
+    return res.status(403).json({ message: "Accès refusé. Seul un Admin ou le propriétaire du compte peut effectuer cette action." });
+};
+
+module.exports = { protect, isAdmin, isWorker, isManager, checkAdminOrOwner };
+
