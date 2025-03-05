@@ -60,7 +60,16 @@ export default function WorkerDetails() {
       prevWorker ? { ...prevWorker, [e.target.name]: e.target.value } : null
     );
   };
-
+  const handleDelete = async () => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer cet employé ?")) {
+      try {
+        await userService.delete(worker!.user_id);
+        navigate("/worker");
+      } catch (err) {
+        console.error("Erreur lors de la suppression :", err);
+      }
+    }
+  };
   const handleSkillChange = (skillId: number) => {
     if (!worker) return;
 
@@ -209,6 +218,12 @@ export default function WorkerDetails() {
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
           >
             {isEditing ? "Enregistrer" : "Modifier"}
+          </button>
+          <button
+            onClick={handleDelete}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+          >
+            Supprimer
           </button>
         </div>
       </div>

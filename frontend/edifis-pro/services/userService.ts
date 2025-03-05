@@ -28,6 +28,10 @@ const userService = {
   getById: async (id: number): Promise<User> => {
     return await apiService.get<User>(`/users/${id}`);
   },
+
+  delete: async (id: number): Promise<void> => {
+    return await apiService.delete(`/users/${id}`);
+  },
 };
 
 export default userService;
