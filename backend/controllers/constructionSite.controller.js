@@ -19,9 +19,41 @@ exports.createConstructionSite = async (req, res) => {
 // Récupérer tous les chantiers
 exports.getAllConstructionSites = async (req, res) => {
     try {
-        const sites = await ConstructionSite.findAll();
+        const sites = await ConstructionSite.findAll({
+            attributes: [
+                "construction_site_id",
+                "name",
+                "state",
+                "description",
+                "adresse",
+                "start_date",
+                "end_date",
+                "open_time",
+                "end_time",
+                "date_creation",
+                "image_url"
+            ],
+            include: [
+                {
+                    model: Task,
+                    attributes: ["task_id", "name", "status"],
+                    include: [
+                        {
+                            model: User,
+                            attributes: ["user_id", "firstname", "lastname", "email"],
+                            through: { attributes: [] },
+                            where: { role_id: 3 },
+                            required: false
+                        }
+                    ]
+                }
+            ]
+        });
+
         res.json(sites);
+
     } catch (error) {
+        console.error("Erreur lors de la récupération des chantiers :", error);
         res.status(500).json({ error: error.message });
     }
 };

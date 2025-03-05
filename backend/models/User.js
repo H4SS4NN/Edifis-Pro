@@ -25,12 +25,16 @@ const User = sequelize.define("users", {
     allowNull: false,
     unique: true,
   },
-  profile_picture: {  
+  profile_picture: {
     type: DataTypes.STRING,
     allowNull: true,
   },
   password: {
     type: DataTypes.STRING,
+    allowNull: false,
+  },
+  role: {
+    type: DataTypes.ENUM("Admin", "Worker", "Manager"),
     allowNull: false,
   },
   created_at: {
