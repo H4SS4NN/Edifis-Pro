@@ -26,6 +26,7 @@ export default function Profile() {
                             autoCorrect="off"
                             value="johndoe@mail.com"
                             placeholder="Email"
+                            readOnly
                         />
                         <label className="sr-only" htmlFor="tel">Téléphone</label>
                         <input
@@ -37,6 +38,7 @@ export default function Profile() {
                             autoCorrect="off"
                             value="06 12 34 56 78"
                             placeholder="Téléphone"
+                            readOnly
                         />
                     </form>
                 </div>

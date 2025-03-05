@@ -18,11 +18,10 @@ import ConstructionDetails from "./pages/construction/ConstructionDetails"
 
 function App() {
     const { isAuthenticated } = useAuth();
-
     return (
         <Routes>
-            {isAuthenticated && (
-                <>
+            {/* {isAuthenticated && (
+                <> */}
                     <Route element={<PageLayout />}>
                         <Route path="/" element={<Home />} />
                         <Route path="/worker" element={<Worker />} />
@@ -34,8 +33,8 @@ function App() {
                         <Route path="/AddConstruction" element={<AddConstruction />} />
                     </Route>
                     <Route path="*" element={<NotFound />} />
-                </>
-            )} 
+                {/* </>
+            )}  */}
             <Route path="*" element={<Navigate to="/login" />} />
             <Route path="/login" element={<Login />} />
         </Routes>

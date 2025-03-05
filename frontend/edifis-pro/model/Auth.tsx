@@ -11,3 +11,10 @@ export interface AuthResponse {
         name?: string;
     };
 }
+
+export interface User {
+    firstname?: string;
+    lastname?: string;
+    phone?: string;
+    email?: string;
+}

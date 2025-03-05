@@ -5,7 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { LoginData } from "../../../model/Auth";
 import logo from "../../assets/images/logo.svg";
 
+import { useAuth } from "../../context/AuthContext";
+
 export default function Login() {
+    const { login } = useAuth();
     const navigate = useNavigate();
     const [formData, setFormData] = useState<LoginData>({
         email: '',
@@ -33,8 +36,7 @@ export default function Login() {
 
         try {
             const response = await authService.login(formData);
-            console.log("Connexion réussie :", response);
-            localStorage.setItem("token", response.token); // a faire je pense en usecontext a voir jsp comment tu veux liutiliser 
+            login(response.token);
             navigate("/");
         } catch (err: any) {
             setError(err);
