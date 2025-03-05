@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom'
-import { useLocation } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
 import { House } from 'lucide-react'
@@ -18,20 +17,19 @@ const routes = [
 ]
 
 export default function SideBar() {
-    const location = useLocation()
     const { logout } = useAuth();
     return (
         <aside className="fixed top-0 left-0 flex flex-col justify-between h-dvh w-[250px] bg-white border-r border-slate-200 pt-16 md:transform md:translate-x-0 transform -translate-x-full">
             <ul className="flex flex-col space-y-1.5 p-4">
                 {routes.map(({ to, label, Icon }, index) => (
-                    <Link to={to} key={index}>
+                    <NavLink to={to} key={index} className="rounded-md cursor-pointer bg-transparent transition-colors hover:bg-slate-200">
                         <li
-                            className={`flex items-center space-x-2 h-8 transition-colors px-2.5 rounded-md cursor-pointer ${location.pathname === to ? "bg-slate-200" : "bg-transparent hover:bg-slate-200"}`}
+                            className={`flex items-center space-x-2 h-8 px-2.5`}
                         >
                             <Icon size={18} />
                             <span className="text-slate-950 text-sm">{label}</span>
                         </li>
-                    </Link>
+                    </NavLink>
                 ))}
             </ul>
             <div className="p-4">
