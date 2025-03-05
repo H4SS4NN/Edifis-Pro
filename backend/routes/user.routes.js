@@ -17,6 +17,6 @@ router.get("/all/manager", protect, isAdmin, userController.getAllManagers);
 router.get("/all", protect, isAdmin, userController.getAllUsers);
 router.get("/:id", protect, isAdmin, userController.getUserById);
 router.put("/:id", protect, userController.updateUser);
-router.delete("/:id", protect, userController.deleteUser);
+router.delete("/:id", protect, isAdmin, userController.deleteUser);
 
 module.exports = router;
