@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 
-
 const protect = (req, res, next) => {
     try {
         const token = req.headers.authorization?.split(" ")[1];
@@ -16,25 +15,28 @@ const protect = (req, res, next) => {
     }
 };
 
-
+// Middleware pour vérifier si l'utilisateur est Admin
 const isAdmin = (req, res, next) => {
-    if (req.user.role !== 1) {
-        return res.status(403).json({ message: "Accès refusé. Seul un Responsable peut acceder a ses options" });
+    if (req.user.role !== "Admin") {
+        return res.status(403).json({ message: "Accès refusé. Seul un Admin peut accéder à ces options." });
     }
     next();
 };
 
+// Middleware pour vérifier si l'utilisateur est Worker
 const isWorker = (req, res, next) => {
-    if (req.user.role !== 2) {
-        return res.status(403).json({ message: "Accès refusé. Seul un Ouvrier peut acceder a ses options " });
+    if (req.user.role !== "Worker") {
+        return res.status(403).json({ message: "Accès refusé. Seul un Worker peut accéder à ces options." });
     }
     next();
-}
-const isManager = (req, res, next) => {
-    if (req.user.role !== 3) {
-        return res.status(403).json({ message: "Accès refusé. Seul un Manager peut acceder a ses options " });
-    }
-    next();
-}
+};
 
-module.exports = { protect, isAdmin , isWorker , isManager};
+// Middleware pour vérifier si l'utilisateur est Manager
+const isManager = (req, res, next) => {
+    if (req.user.role !== "Manager") {
+        return res.status(403).json({ message: "Accès refusé. Seul un Manager peut accéder à ces options." });
+    }
+    next();
+};
+
+module.exports = { protect, isAdmin, isWorker, isManager };

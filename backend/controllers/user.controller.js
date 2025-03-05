@@ -196,6 +196,34 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
+// Récupérer tous les chefs de projet (utilisateurs avec `role = Manager`)
+exports.getAllManagers = async (req, res) => {
+    try {
+        const managers = await User.findAll({
+            attributes: ["user_id", "firstname", "lastname", "email", "numberphone", "profile_picture", "role"],
+            where: {
+                role: "Manager" // Inclure uniquement les Managers
+            },
+            include: [
+                {
+                    model: Competence,
+                    attributes: ["name"],
+                    through: { attributes: [] }
+                }
+            ]
+        });
+
+        if (!managers.length) {
+            return res.status(404).json({ message: "Aucun chef de projet trouvé" });
+        }
+
+        res.json(managers);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des chefs de projet :", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
 // Récupérer un utilisateur par ID
 exports.getUserById = async (req, res) => {
     try {

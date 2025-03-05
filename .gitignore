@@ -33,7 +33,7 @@ jspm_packages/
 # dotenv environment variables file
 .env
 
-backend/uploads/constructionsites/*
+backend/uploads/construction_sites/*
 backend/uploads/profile_pictures/*
 # IDEs and editors
 .vscode/
