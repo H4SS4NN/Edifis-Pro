@@ -5,41 +5,6 @@ import constructionSiteService, {
 } from "../../../services/constructionSiteService";
 
 export default function Home() {
-  // const projects = [
-  //     {
-  //         name: "Excavation et pose des fondations",
-  //         description: "Creuser et préparer le terrain pour couler les fondations en béton.",
-  //         site: "Chantier Tour Azure",
-  //         address: "12 rue des Bâtisseurs, Lyon",
-  //         manager: "Jean Dupont",
-  //         status: "En cours",
-  //         startDate: "2024-03-01",
-  //         endDate: "2024-06-30",
-  //         image: "https://batiadvisor.fr/wp-content/uploads/2020/07/imprevus-chantier.jpg"
-  //     },
-  //     {
-  //         name: "Assemblage et installation de la charpente",
-  //         description: "Monter et fixer la charpente en bois ou en métal selon le plan.",
-  //         site: "Projet Éco-Village",
-  //         address: "45 avenue des Artisans, Marseille",
-  //         manager: "Pierre Morel",
-  //         status: "En cours",
-  //         startDate: "2024-02-20",
-  //         endDate: "2024-05-15",
-  //         image: "https://img.centrefrance.com/1Mox6-5o3cmt7N89GZvF7bzCWG35KxepDkzzyhX5ZqQ/rs:fit:657:438:1:0/bG9jYWw6Ly8vMDAvMDAvMDcvMzIvMTUvMjAwMDAwNzMyMTUzNQ.webp"
-  //     },
-  //     {
-  //         name: "Peinture intérieure des appartements",
-  //         description: "Appliquer une première couche d’enduit, puis peindre les murs.",
-  //         site: "Résidence Soleil",
-  //         address: "78 boulevard du BTP, Toulouse",
-  //         manager: "Sophie Lambert",
-  //         status: "En retard",
-  //         startDate: "2024-01-10",
-  //         endDate: "2024-03-15",
-  //         image: "https://media.lesechos.com/api/v1/images/view/60128e7ad286c235d16c6ee6/1280x720/061364255283-web-tete.jpg"
-  //     },
-  // ];
   const [projects, setProjects] = useState<ConstructionSite[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,14 +14,14 @@ export default function Home() {
       try {
         const data = await constructionSiteService.getAll();
 
-        
+        console.log("Data:", data);
         const formattedData = data.map((site) => ({
           id: site.construction_site_id,
           name: site.name,
           description: site.description,
-          site: site.adresse, 
+          site: site.adresse,
           address: site.adresse,
-          manager: "Non spécifié", 
+          manager: site.chefDeProjet ? site.chefDeProjet.firstname : "Inconnu",
           status: site.state,
           startDate: site.start_date,
           endDate: site.end_date,
@@ -111,9 +76,6 @@ export default function Home() {
                 {project.name}
               </h5>
               <p className="text-gray-700 mb-3">{project.description}</p>
-              <p className="text-sm text-gray-600">
-                <strong>📍 Site :</strong> {project.site}
-              </p>
               <p className="text-sm text-gray-600">
                 <strong>🏠 Adresse :</strong> {project.address}
               </p>

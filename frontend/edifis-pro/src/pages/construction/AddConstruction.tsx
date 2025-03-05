@@ -1,67 +1,174 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import constructionSiteService from "../../../services/constructionSiteService";
+import userService, { User } from "../../../services/userService";
 
 export default function AddConstruction() {
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        name: "",
-        description: "",
-        site: "",
-        address: "",
-        manager: "",
-        status: "En cours",
-        startDate: "",
-        endDate: "",
-        image: null
+  const navigate = useNavigate();
+  const [managers, setManagers] = useState<User[]>([]);
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    address: "",
+    managerId: "",
+    status: "En cours",
+    startDate: "",
+    endDate: "",
+  });
+  const [image, setImage] = useState<File | null>(null);
+  // Charger la liste des managers au chargement de la page
+  useEffect(() => {
+    const fetchManagers = async () => {
+      try {
+        const managersData = await userService.getAllManagers();
+        setManagers(managersData);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des managers :", error);
+      }
+    };
+    fetchManagers();
+  }, []);
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setImage(e.target.files[0]);
+    }
+  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const formattedData = {
+      ...formData,
+      managerId: formData.managerId ? parseInt(formData.managerId, 10) : null,
+    };
+
+    const formDataToSend = new FormData();
+    Object.entries(formattedData).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formDataToSend.append(key, String(value));
+      }
     });
 
-    const handleChange = (e) => {
-        const { name, value, type, files } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === "file" ? files[0] : value
-        }));
-    };
+    if (image) {
+      formDataToSend.append("image", image);
+    }
+    try {
+      await constructionSiteService.create(formDataToSend);
+      console.log(" Chantier ajouté avec succès");
+      navigate("/");
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du chantier :", error);
+    }
+  };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Chantier ajouté :", formData);
-        navigate("/");
-    };
+  return (
+    <main className="min-h-screen p-8 bg-gray-100 flex justify-center">
+      <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          Ajouter un chantier
+        </h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            name="name"
+            placeholder="Nom du chantier"
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full p-3 border rounded"
+            required
+          />
+          <textarea
+            name="description"
+            placeholder="Description"
+            value={formData.description}
+            onChange={handleChange}
+            className="w-full p-3 border rounded"
+            required
+          ></textarea>
+          <input
+            type="text"
+            name="address"
+            placeholder="Adresse"
+            value={formData.address}
+            onChange={handleChange}
+            className="w-full p-3 border rounded"
+            required
+          />
 
-    return (
-        <main className="min-h-screen p-8 bg-gray-100 flex justify-center">
-            <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">Ajouter un chantier</h1>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <input type="text" name="name" placeholder="Nom du chantier" value={formData.name} onChange={handleChange} className="w-full p-3 border rounded" required />
-                    <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange} className="w-full p-3 border rounded" required></textarea>
-                    <input type="text" name="site" placeholder="Nom du site" value={formData.site} onChange={handleChange} className="w-full p-3 border rounded" required />
-                    <input type="text" name="address" placeholder="Adresse" value={formData.address} onChange={handleChange} className="w-full p-3 border rounded" required />
-                    
-                    <select name="manager" value={formData.manager} onChange={handleChange} className="w-full p-3 border rounded" required>
-                        <option value="">Sélectionner un chef de chantier</option>
-                        <option value="Marc Dupont">Marc Dupont</option>
-                        <option value="Sophie Lemoine">Sophie Lemoine</option>
-                        <option value="Julien Morel">Julien Morel</option>
-                    </select>
-                    
-                    <select name="status" value={formData.status} onChange={handleChange} className="w-full p-3 border rounded">
-                        <option value="En cours">En cours</option>
-                        <option value="Terminé">Terminé</option>
-                        <option value="En retard">En retard</option>
-                    </select>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                        <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} className="w-full p-3 border rounded" required />
-                        <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} className="w-full p-3 border rounded" required />
-                    </div>
-                    
-                    <input type="file" name="image" onChange={handleChange} className="w-full p-3 border rounded" />
-                    
-                    <button type="submit" className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition">Ajouter</button>
-                </form>
-            </div>
-        </main>
-    );
+          <select
+            name="managerId"
+            value={formData.managerId}
+            onChange={handleChange}
+            className="w-full p-3 border rounded"
+            required
+          >
+            <option value="">Sélectionner un chef de chantier</option>
+            {managers.map((manager) => (
+              <option key={manager.id} value={manager.id}>
+                {" "}
+                {/* ✅ Assurer que c'est bien l'ID */}
+                {manager.firstname} {manager.lastname}
+              </option>
+            ))}
+          </select>
+
+          <select
+            name="state"
+            value={formData.status}
+            onChange={handleChange}
+            className="w-full p-3 border rounded"
+          >
+            <option value="En cours">En cours</option>
+            <option value="Terminé">Terminé</option>
+            <option value="En retard">En retard</option>
+          </select>
+
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              type="date"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
+              className="w-full p-3 border rounded"
+              required
+            />
+            <input
+              type="date"
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleChange}
+              className="w-full p-3 border rounded"
+              required
+            />
+          </div>
+
+          <input
+            type="file"
+            name="image"
+            onChange={handleImageChange}
+            className="w-full p-3 border rounded"
+          />
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition"
+          >
+            Ajouter
+          </button>
+        </form>
+      </div>
+    </main>
+  );
 }

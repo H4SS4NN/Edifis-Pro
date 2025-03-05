@@ -9,14 +9,42 @@ const path = require("path");
 // Créer un chantier
 exports.createConstructionSite = async (req, res) => {
     try {
-        const site = await ConstructionSite.create(req.body);
+        console.log("Données reçues :", req.body);
+        const { name, state, description, adresse, start_date, end_date, open_time, end_time, chef_de_projet_id } = req.body;
+
+        let chefDeProjet = null;
+        if (chef_de_projet_id) {
+            chefDeProjet = await User.findByPk(chef_de_projet_id);
+            if (!chefDeProjet || chefDeProjet.role !== "Manager") {
+                return res.status(400).json({ message: "L'utilisateur spécifié n'est pas un chef de projet valide" });
+            }
+        }
+
+        // Vérifier si une image a été envoyée
+        let image_url = null;
+        if (req.file) {
+            image_url = req.file.filename; // Nom du fichier stocké
+        }
+
+        const site = await ConstructionSite.create({
+            name,
+            state,
+            description,
+            adresse,
+            start_date,
+            end_date,
+            open_time,
+            end_time,
+            chef_de_projet_id: chefDeProjet ? chef_de_projet_id : null,
+            image_url
+        });
+
         res.status(201).json(site);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
-// Récupérer tous les chantiers
 exports.getAllConstructionSites = async (req, res) => {
     try {
         const sites = await ConstructionSite.findAll({
@@ -31,32 +59,25 @@ exports.getAllConstructionSites = async (req, res) => {
                 "open_time",
                 "end_time",
                 "date_creation",
-                "image_url"
+                "image_url",
+                "chef_de_projet_id" // Inclure l'ID du chef de projet
             ],
             include: [
                 {
-                    model: Task,
-                    attributes: ["task_id", "name", "status"],
-                    include: [
-                        {
-                            model: User,
-                            attributes: ["user_id", "firstname", "lastname", "email"],
-                            through: { attributes: [] },
-                            where: { role_id: 3 },
-                            required: false
-                        }
-                    ]
+                    model: User,
+                    as: "chefDeProjet", // Assurer l'alias correspondant à la relation définie dans Sequelize
+                    attributes: ["user_id", "firstname", "lastname", "email"]
                 }
             ]
         });
 
         res.json(sites);
-
     } catch (error) {
         console.error("Erreur lors de la récupération des chantiers :", error);
         res.status(500).json({ error: error.message });
     }
 };
+
 
 // Récupérer un chantier par ID
 exports.getConstructionSiteById = async (req, res) => {
