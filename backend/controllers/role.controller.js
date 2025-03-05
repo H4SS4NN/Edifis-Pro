@@ -1,52 +1,30 @@
 const Role = require("../models/Role");
 
-exports.createRole = async (req, res) => {
+const User = require("../models/User");
+
+// Mettre à jour le rôle d'un utilisateur (Seul un Responsable peut le faire)
+exports.updateUserRole = async (req, res) => {
     try {
-        const role = await Role.create(req.body);
-        res.status(201).json(role);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+        // Vérifie si l'utilisateur connecté est Responsable
+        if (req.user.role !== 1) {
+            return res.status(403).json({ message: "Accès refusé. Seul un Responsable peut modifier un rôle" });
+        }
 
-exports.getAllRoles = async (req, res) => {
-    try {
-        const roles = await Role.findAll();
-        res.json(roles);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+        const { userId, newRoleId } = req.body;
 
-exports.getRoleById = async (req, res) => {
-    try {
-        const role = await Role.findByPk(req.params.id);
-        if (!role) return res.status(404).json({ message: "Rôle non trouvé" });
-        res.json(role);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+        if (!userId || !newRoleId) {
+            return res.status(400).json({ message: "L'ID utilisateur et le nouveau rôle sont requis" });
+        }
 
-exports.updateRole = async (req, res) => {
-    try {
-        const role = await Role.findByPk(req.params.id);
-        if (!role) return res.status(404).json({ message: "Rôle non trouvé" });
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
 
-        await role.update(req.body);
-        res.json(role);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+        // Mise à jour du rôle
+        await user.update({ role_id: newRoleId });
 
-exports.deleteRole = async (req, res) => {
-    try {
-        const role = await Role.findByPk(req.params.id);
-        if (!role) return res.status(404).json({ message: "Rôle non trouvé" });
-
-        await role.destroy();
-        res.json({ message: "Rôle supprimé" });
+        res.json({ message: "Rôle mis à jour avec succès", user });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

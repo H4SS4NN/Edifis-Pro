@@ -1,13 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const userController = require("../controllers/user.controller"); // Vérifier cette ligne !
+const userController = require("../controllers/user.controller");
+const { protect, isAdmin } = require("../middlewares/auth.middleware");
+const { upload, setUploadType } = require("../middlewares/upload.middleware");
 
-router.post("/register", userController.createUser); // Vérifier que `createUser` est bien défini
-router.post("/login", userController.login); // Vérifier que `login` est bien défini
+
+
+router.post("/register", protect, isAdmin, userController.createUser);
+router.post("/login", userController.login);
 
 // Routes protégées
-const protect = require("../middlewares/auth.middleware"); // Vérifier si `protect` est bien importé
-router.get("/", protect, userController.getAllUsers);
+
+router.post("/upload-profile", protect, setUploadType("profile"), upload.single("image"), userController.updateProfilePicture);
+
+
+router.get("/all", protect, isAdmin, userController.getAllUsers);
 router.get("/:id", protect, userController.getUserById);
 router.put("/:id", protect, userController.updateUser);
 router.delete("/:id", protect, userController.deleteUser);
