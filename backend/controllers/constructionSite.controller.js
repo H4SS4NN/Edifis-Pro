@@ -82,10 +82,33 @@ exports.getAllConstructionSites = async (req, res) => {
 // Récupérer un chantier par ID
 exports.getConstructionSiteById = async (req, res) => {
     try {
-        const site = await ConstructionSite.findByPk(req.params.id);
+        const site = await ConstructionSite.findByPk(req.params.id, {
+            attributes: [
+                "construction_site_id",
+                "name",
+                "state",
+                "description",
+                "adresse",
+                "start_date",
+                "end_date",
+                "open_time",
+                "end_time",
+                "date_creation",
+                "image_url",
+                "chef_de_projet_id" // Inclure l'ID du chef de projet
+            ],
+            include: [
+                {
+                    model: User,
+                    as: "chefDeProjet", // Assurer l'alias correspondant à la relation définie dans Sequelize
+                    attributes: ["user_id", "firstname", "lastname", "email"]
+                }
+            ]
+        });
         if (!site) return res.status(404).json({ message: "Chantier non trouvé" });
         res.json(site);
     } catch (error) {
+        console.error("Erreur lors de la récupération du chantier :", error);
         res.status(500).json({ error: error.message });
     }
 };
