@@ -26,8 +26,8 @@ function App() {
                 <Route element={<PageLayout />}>
                     <Route path="/" element={<Home />} />
                     <Route path="/profile" element={<Profile />} />
-          <Route path="/missions" element={<Missions />} />
-          <Route path="/addamission" element={<CreateTask />} />
+                    <Route path="/missions" element={<Missions />} />
+                    <Route path="/addamission" element={<CreateTask />} />
                     <Route path="/construction" element={<Construction />} />
                     <Route
                         path="/ConstructionDetails/:id"

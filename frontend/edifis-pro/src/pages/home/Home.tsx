@@ -1,7 +1,7 @@
 import { useAuth } from "../../context/AuthContext";
 
-import Badge from "../../components/badge/Badge";
 import TimelineChart from "../../components/timelineChart/TimelineChart";
+import Badge from "../../components/badge/Badge";
 
 interface Task {
     id: number;
@@ -9,9 +9,9 @@ interface Task {
     description: string;
     dateStart: string;
     dateEnd: string;
-    status: "done" | "pending" | "upcoming";
+    status: "Prévu" | "En cours" | "Annulé" | "Terminée";
 }
-// Chantier BTP ouvrier
+
 const tasks: Task[] = [
     {
         id: 1,
@@ -19,7 +19,7 @@ const tasks: Task[] = [
         description: "Installer les échafaudages pour la construction de la maison",
         dateStart: "2025-10-10T03:00:00.000Z",
         dateEnd: "2025-10-15T12:00:00.000Z",
-        status: "upcoming"
+        status: "En cours"
     },
     {
         id: 2,
@@ -27,7 +27,7 @@ const tasks: Task[] = [
         description: "Coulage de la dalle de la maison",
         dateStart: "2025-10-16T08:00:00.000Z",
         dateEnd: "2025-10-16T17:00:00.000Z",
-        status: "pending"
+        status: "Terminée"
     },
     {
         id: 3,
@@ -35,7 +35,15 @@ const tasks: Task[] = [
         description: "Pose des murs de la maison",
         dateStart: "2025-10-21T12:00:00.000Z",
         dateEnd: "2025-10-22T13:00:00.000Z",
-        status: "done"
+        status: "Prévu"
+    },
+    {
+        id: 4,
+        title: "Pose de la charpente",
+        description: "Pose de la charpente de la maison",
+        dateStart: "2025-10-23T08:00:00.000Z",
+        dateEnd: "2025-10-23T17:00:00.000Z",
+        status: "Annulé",
     }
 ];
 
@@ -63,20 +71,26 @@ export default function Home() {
             <div className="flex flex-col min-h-0 h-full overflow-y-auto space-y-4 scrollbar-thin">
                 <h2 className="text-xl font-semibold text-slate-950">Vos missions</h2>
                 {tasks.map((task) => (
-                    <div
-                        key={task.id}
-                        className="bg-white border border-slate-200 rounded-lg p-4"
-                    >
+                    <div className="bg-white border border-slate-200 rounded-xl p-4">
                         <div className="flex justify-between items-center flex-wrap mb-2">
-                            <h3 className="font-semibold mr-2">
-                                {task.title}
-                            </h3>
-                            <Badge status={task.status} />
+                            <h3 className="font-semibold text-slate-900 mr-2">{task.title}</h3>
+                            {task.status && <Badge status={task.status} />}
                         </div>
-                        <p className="text-sm mb-2">{task.description}</p>
-                        <span className="text-xs text-slate-500 leading-none">
-                            Du {new Date(task.dateStart).toLocaleDateString()} au {new Date(task.dateEnd).toLocaleDateString()}
-                        </span>
+            
+                        <p className="text-sm text-slate-700 mb-2">{task.description}</p>
+            
+                        <div className="my-2 border-b border-slate-200" />
+
+                        {task.dateStart && task.dateEnd && (
+                            <div className="flex flex-col">
+                                <span className="text-xs text-slate-500">
+                                    Début → {new Date(task.dateStart).toLocaleDateString()} - {new Date(task.dateStart).toLocaleTimeString()}
+                                </span>
+                                <span className="text-xs text-slate-500">
+                                    Fin → {new Date(task.dateEnd).toLocaleDateString()} à {new Date(task.dateEnd).toLocaleTimeString()}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
