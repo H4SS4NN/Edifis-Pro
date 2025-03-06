@@ -61,7 +61,7 @@ export default function Home() {
                             ? "Administrateur"
                             : user.role === "Manager"
                                 ? "Chef de projet"
-                                : user.role === "worker"
+                                : user.role === "Worker"
                                     ? "Ouvrier"
                                     : "Rôle inconnu"}
                     </p>
