@@ -28,8 +28,9 @@ export default function Header() {
           <img
             className="aspect-square h-full w-full"
             src={
-              `http://localhost:5000/uploads/profile_pictures/${user.profile_picture}` ||
-              "https://i.pinimg.com/736x/ab/32/b1/ab32b1c5a8fabc0b9ae72250ce3c90c2.jpg"
+              user.profile_picture
+                ? `http://localhost:5000/uploads/profile_pictures/${user.profile_picture}`
+                : "https://i.pinimg.com/736x/ab/32/b1/ab32b1c5a8fabc0b9ae72250ce3c90c2.jpg"
             }
             alt="photo de profil"
           />
