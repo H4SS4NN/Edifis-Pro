@@ -195,6 +195,9 @@ export default function CreateTask() {
             {users.map((user) => (
               <option key={user.user_id} value={user.user_id}>
                 {user.firstname} {user.lastname}
+                {user.competences && user.competences.length > 0 && (
+                  <> - {user.competences.map(c => c.name).join(", ")}</>
+                )}
               </option>
             ))}
           </select>
