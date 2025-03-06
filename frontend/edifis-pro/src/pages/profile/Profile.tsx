@@ -75,7 +75,7 @@ export default function Profile() {
             <div className="w-full">
                 <div className="flex justify-between flex-wrap mb-5">
                     <div>
-                        <h1 className="text-3xl font-medium space-y-2">
+                        <h1 className="text-3xl font-semibold space-y-2">
                             {isEditing ? (
                                 <input
                                     type="text"
