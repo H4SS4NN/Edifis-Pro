@@ -27,6 +27,14 @@ export default function Profile() {
       setPreviewImage(URL.createObjectURL(e.target.files[0])); // Affiche l'aperçu immédiatement
     }
   };
+  const handleSave = async () => {
+    try {
+      await updateUser(updatedUser); // Attendre que la mise à jour soit terminée
+      setIsEditing(false); // Désactiver le mode édition après mise à jour
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du profil :", error);
+    }
+  };
 
   // Envoi de l’image via userService
   const handleUploadImage = async () => {
@@ -41,6 +49,7 @@ export default function Profile() {
         // Met à jour l'affichage et le contexte utilisateur
         setPreviewImage(newProfilePic);
         updateUser({ ...user, profile_picture: response.profile_picture });
+        setIsEditing(false);
       }
     } catch (error) {
       console.error("Erreur lors de l'upload de l'image :", error);
@@ -117,9 +126,7 @@ export default function Profile() {
 
         <button
           className="absolute right-0 bg-slate-200 text-slate-950 hover:bg-slate-300 h-9 py-2 px-4 rounded"
-          onClick={() =>
-            isEditing ? updateUser(updatedUser) : setIsEditing(true)
-          }
+          onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
         >
           {isEditing ? "Sauvegarder" : "Modifier"}
         </button>
@@ -127,7 +134,15 @@ export default function Profile() {
 
       {/* Upload de l’image */}
       <div className="mt-4">
-        <input type="file" accept="image/*" onChange={handleImageChange} />
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Charger une nouvelle image de profil
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+        />
         <button
           className="bg-blue-500 text-white py-2 px-4 rounded mt-2"
           onClick={handleUploadImage}
