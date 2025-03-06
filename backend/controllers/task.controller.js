@@ -22,7 +22,7 @@ exports.getAllTasks = async (req, res) => {
                 },
                 {
                     model: ConstructionSite,
-                    attributes: ["construction_site_id", "name"]
+                    attributes: ["construction_site_id", "name", "state", "open_time", "end_time"]
                 }
             ]
         });
@@ -123,7 +123,7 @@ exports.getTasksByUserId = async (req, res) => {
                 },
                 {
                     model: ConstructionSite,
-                    attributes: ["construction_site_id", "name"]
+                    attributes: ["construction_site_id", "name", "state", "open_time", "end_time", 'start_date', 'end_date', 'image_url', 'chef_de_projet_id', 'adresse'],
                 }
             ]
         });

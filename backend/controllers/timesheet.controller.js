@@ -89,7 +89,11 @@ exports.clockOut = async (req, res) => {
             where: { user_id: userId, end_date: null }
         });
 
-        if (!timesheet) return res.status(400).json({ message: "Aucune entrée trouvée pour cet utilisateur" });
+        if (!timesheet) {
+            return res.status(400).json({
+                message: "Aucune entrée trouvée pour cet utilisateur (déjà clock out ?)"
+            });
+        }
 
         timesheet.end_date = new Date();
         await timesheet.save();

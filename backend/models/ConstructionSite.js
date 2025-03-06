@@ -12,7 +12,7 @@ const ConstructionSite = sequelize.define("construction_site", {
     allowNull: false,
   },
   state: {
-    type: DataTypes.ENUM("En cours", "Terminé", "Annulé", "Prevu"),
+    type: DataTypes.ENUM("En cours", "Terminé", "Annulé", "Prévu"),
     allowNull: false,
   },
   description: {

@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const fs = require("fs");
+const Task = require("../models/Task");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 const Role = require("../models/Role");
 const Competence = require("../models/Competence");
@@ -180,6 +181,48 @@ exports.getAllUsers = async (req, res) => {
                 {
                     model: Competence,
                     attributes: ["name"],
+                    through: { attributes: [] }
+                },
+                {
+                    model: Task,
+                    attributes: ["task_id", "description", "start_date", "end_date"],
+                    through: { attributes: [] }
+                }
+            ]
+        });
+
+        if (!users.length) {
+            return res.status(404).json({ message: "Aucun utilisateur trouvé (hors Admins)" });
+        }
+
+        res.json(users);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des utilisateurs :", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getAllWorkers = async (req, res) => {
+    try {
+        console.log(req.user.role);
+        if (req.user.role !== "Admin" && req.user.role !== "Manager") {
+            return res.status(403).json({ message: "Accès refusé. Seuls les Admins et Managers peuvent accéder à cette ressource" });
+        }
+
+        const users = await User.findAll({
+            attributes: ["user_id", "firstname", "lastname", "email", "numberphone", "profile_picture", "role"],
+            where: {
+                role: { [Op.notIn]: ["Admin", "Manager"] } // Exclure les Admins et Managers
+            },
+            include: [
+                {
+                    model: Competence,
+                    attributes: ["name"],
+                    through: { attributes: [] }
+                },
+                {
+                    model: Task,
+                    attributes: ["task_id", "description", "start_date", "end_date"],
                     through: { attributes: [] }
                 }
             ]
