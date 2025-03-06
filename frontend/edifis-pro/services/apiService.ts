@@ -87,6 +87,16 @@ const apiService = {
       throw error.message || "Erreur de connexion au serveur";
     }
   },
+  postForm: async <T>(endpoint: string, formData: FormData): Promise<T> => {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: formData,
+    });
+    return await response.json();
+  },
 };
 
 export default apiService;

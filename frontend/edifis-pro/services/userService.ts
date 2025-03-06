@@ -37,6 +37,17 @@ const userService = {
   delete: async (id: number): Promise<void> => {
     return await apiService.delete(`/users/${id}`);
   },
+  uploadProfilePicture: async (
+    file: File
+  ): Promise<{ profile_picture: string }> => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    return await apiService.postForm<{ profile_picture: string }>(
+      "/users/upload-profile",
+      formData
+    );
+  },
 };
 
 export default userService;
