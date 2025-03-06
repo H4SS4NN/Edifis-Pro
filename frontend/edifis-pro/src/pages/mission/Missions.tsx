@@ -80,6 +80,7 @@ export default function Missions() {
             >
               <h2 className="text-2xl font-semibold text-gray-900 mb-2">{task.name}</h2>
               <p className="text-gray-700">{task.description}</p>
+
               <p className="text-sm text-gray-600 mt-2">
                 <strong>📅 Début :</strong> {task.start_date || "Non défini"}
               </p>

@@ -1,5 +1,6 @@
 const Task = require("../models/Task");
 const User = require("../models/User");
+const ConstructionSite = require("../models/ConstructionSite");
 
 // CRUD identique à `users`
 exports.createTask = async (req, res) => {
@@ -18,6 +19,10 @@ exports.getAllTasks = async (req, res) => {
                     model: User,
                     through: { attributes: [] },
                     attributes: ["user_id", "firstname", "lastname", "email", "profile_picture"]
+                },
+                {
+                    model: ConstructionSite,
+                    attributes: ["construction_site_id", "name"]
                 }
             ]
         });
@@ -26,6 +31,7 @@ exports.getAllTasks = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 
 exports.getTaskById = async (req, res) => {
@@ -112,15 +118,19 @@ exports.getTasksByUserId = async (req, res) => {
                 {
                     model: User,
                     through: { attributes: [] },
-                    where: { user_id: userId }, // Filtrer les tâches par utilisateur
+                    where: { user_id: userId },
                     attributes: ["user_id", "firstname", "lastname", "email"]
+                },
+                {
+                    model: ConstructionSite,
+                    attributes: ["construction_site_id", "name"]
                 }
             ]
         });
-
 
         res.json(tasks);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
