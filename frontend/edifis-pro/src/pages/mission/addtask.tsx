@@ -24,11 +24,19 @@ export default function CreateTask() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const data = await userService.getAllUsers();
+        let data;
+        if (user.role === "Admin") {
+          data = await userService.getAllUsers(); // Récupère tous les utilisateurs sauf Admins
+        } else if (user.role === "Manager") {
+          data = await userService.getAllWorkers(); // Récupère uniquement les ouvriers
+        } else {
+          setError("Vous n'avez pas accès à cette ressource.");
+          return;
+        }
+
         setUsers(data);
       } catch (err) {
         setError("Erreur lors du chargement des utilisateurs.");
@@ -46,7 +54,7 @@ export default function CreateTask() {
 
     fetchUsers();
     fetchConstructions();
-  }, []);
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -29,6 +29,11 @@ const userService = {
     return await apiService.get<User[]>("/users/all");
   },
 
+  // Récupérer tous les ouvriers
+  getAllWorkers: async (): Promise<User[]> => {
+    return await apiService.get<User[]>("/users/getallworkers");
+  },
+
   // Récupérer un utilisateur par son ID
   getById: async (id: number): Promise<User> => {
     return await apiService.get<User>(`/users/${id}`);

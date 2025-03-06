@@ -18,5 +18,6 @@ router.get("/all", protect, isAdmin, userController.getAllUsers);
 router.get("/:id", protect, userController.getUserById);
 router.put("/:id", protect, userController.updateUser);
 router.delete("/:id", protect, isAdmin, userController.deleteUser);
+router.get('/getallworkers', protect, userController.getAllWorkers);
 
 module.exports = router;
