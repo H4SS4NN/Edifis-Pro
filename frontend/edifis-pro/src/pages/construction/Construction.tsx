@@ -79,7 +79,7 @@ export default function Home() {
 
             <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-6">
                 {projects.map((project) => (
-                    <div className="bg-white border border-slate-200 rounded-xl p-4">
+                    <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col">
                         <img
                             className="h-48 w-full object-cover rounded-md mb-3"
                             src={project.image}
@@ -92,7 +92,7 @@ export default function Home() {
                         <p className="text-sm text-slate-700 mb-2">{project.description}</p>
                         <div className="my-2 border-b border-slate-200" />
 
-                        <div className="flex flex-col space-y-2">
+                        <div className="flex flex-col space-y-2 flex-grow">
                             <div>
                                 <p className="text-sm font-medium text-slate-950">Adresse</p>
                                 <p className="text-sm text-slate-700">{project.address}</p>
@@ -111,7 +111,7 @@ export default function Home() {
                             </div>
                             <Link
                                 to={`/ConstructionDetails/${project.id}`}
-                                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-1 outline-offset-4 disabled:pointer-events-none disabled:opacity-50 bg-slate-200 text-slate-950 hover:bg-slate-300 h-9 px-4 py-2"
+                                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-1 outline-offset-4 disabled:pointer-events-none disabled:opacity-50 bg-slate-200 text-slate-950 hover:bg-slate-300 h-9 px-4 py-2 mt-auto"
                             >
                                 Voir plus
                             </Link>
