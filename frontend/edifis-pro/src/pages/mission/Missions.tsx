@@ -15,6 +15,7 @@ export default function Missions() {
     const fetchTasks = async () => {
       try {
         let data;
+        console.log(user);
         if (user.role === "Admin") {
           data = await taskService.getAll();
         } else {
@@ -117,7 +118,7 @@ export default function Missions() {
                   <p className="text-gray-600">Aucun assigné</p>
                 ) : task.users.length === 1 ? (
                   <p className="text-gray-800">
-                    {task.users[0].firstname} {task.users[0].lastname}
+                    {task.users[0].firstname} {task.users[0].lastname}{" "}
                   </p>
                 ) : (
                   <ul className="text-gray-800">
@@ -154,36 +155,37 @@ export default function Missions() {
                 </p>
               </div>
               {/* Bouton Modifier */}
-              {(user.role === "Admin" || user.role === "Manager") && (
-                <Link
-                  to={`/editmission/${task.task_id}`}
-                  className="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600"
-                >
-                  Modifier
-                </Link>
-              )}
-              {/* Bouton Supprimer */}
-              {(user.role === "Admin" || user.role === "Manager") && (
-                <button
-                  onClick={async () => {
-                    if (
-                      window.confirm("Êtes-vous sûr de vouloir supprimer ?")
-                    ) {
-                      try {
-                        await taskService.delete(task.task_id);
-                        setTasks((prev) =>
-                          prev.filter((t) => t.task_id !== task.task_id)
-                        );
-                      } catch (err) {
-                        console.error(err);
+              {(user.role === "Admin" || user.role === "Manager") &&
+                !task.users.some((u) => u.user_id === user.user_id) && (
+                  <Link
+                    to={`/editmission/${task.task_id}`}
+                    className="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600"
+                  >
+                    Modifier
+                  </Link>
+                )}
+              {(user.role === "Admin" || user.role === "Manager") &&
+                !task.users.some((u) => u.user_id === user.user_id) && (
+                  <button
+                    onClick={async () => {
+                      if (
+                        window.confirm("Êtes-vous sûr de vouloir supprimer ?")
+                      ) {
+                        try {
+                          await taskService.delete(task.task_id);
+                          setTasks((prev) =>
+                            prev.filter((t) => t.task_id !== task.task_id)
+                          );
+                        } catch (err) {
+                          console.error(err);
+                        }
                       }
-                    }
-                  }}
-                  className="mt-4 inline-block bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600"
-                >
-                  Supprimer
-                </button>
-              )}
+                    }}
+                    className="mt-4 inline-block bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600"
+                  >
+                    Supprimer
+                  </button>
+                )}
             </div>
           ))
         )}
