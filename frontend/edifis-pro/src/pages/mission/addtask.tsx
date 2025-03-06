@@ -11,7 +11,7 @@ export default function CreateTask() {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("En attente");
+  const [status, setStatus] = useState("Prévu");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
@@ -183,9 +183,10 @@ export default function CreateTask() {
             onChange={(e) => setStatus(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg"
           >
-            <option value="En attente">En attente</option>
+            <option value="Prévu">Prévu</option>
             <option value="En cours">En cours</option>
-            <option value="Terminée">Terminée</option>
+            <option value="Annulé">Annulé</option>
+            <option value="Terminé">Terminé</option>
           </select>
         </div>
 
