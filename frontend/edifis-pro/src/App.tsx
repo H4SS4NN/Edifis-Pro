@@ -36,9 +36,11 @@ function App() {
                         element={<ConstructionDetails />}
                     />
 
-                    <Route path="/AddConstruction" element={<AddConstruction />} />
+                    <Route element={<ProtectedRoute requiredRoles={["Admin", "Manager"]} />}>
+                        <Route path="/AddConstruction" element={<AddConstruction />} />
+                    </Route>
                     {/* Routes accessibles uniquement aux admins */}
-                    <Route element={<ProtectedRoute requiredRole="Admin" />}>
+                    <Route element={<ProtectedRoute requiredRoles={["Admin"]} />}>
                         <Route path="/worker" element={<Worker />} />
                         <Route path="/AddWorker" element={<AddWorker />} />
                         <Route path="/worker/:id" element={<WorkerDetails />} />

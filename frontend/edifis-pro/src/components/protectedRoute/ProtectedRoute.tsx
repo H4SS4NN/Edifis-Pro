@@ -5,10 +5,10 @@ import { useEffect, useState } from "react";
 import Loading from "../loading/Loading";
 
 interface ProtectedRouteProps {
-    requiredRole?: string; // Rôle optionnel à vérifier
+    requiredRoles?: string[]; // Liste des rôles autorisés
 }
 
-const ProtectedRoute = ({ requiredRole }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ requiredRoles }: ProtectedRouteProps) => {
     const { isAuthenticated, user } = useAuth();
     const [loading, setLoading] = useState(true);
 
@@ -31,12 +31,11 @@ const ProtectedRoute = ({ requiredRole }: ProtectedRouteProps) => {
         return <Navigate to="/login" replace />;
     }
 
-    // Vérification du rôle si nécessaire
-    if (requiredRole && user?.role !== requiredRole) {
-        return <Navigate to="/" replace />; // Redirige vers l'accueil si l'utilisateur n'a pas le bon rôle
+    if (requiredRoles && !requiredRoles.includes(user?.role)) {
+        return <Navigate to="/" replace />;
     }
 
-  return <Outlet />;
+    return <Outlet />;
 };
 
 export default ProtectedRoute;
