@@ -72,42 +72,7 @@ export default function ConstructionDetails() {
   if (error) return <p className="text-center text-red-500">{error}</p>;
   if (!construction) return <p className="text-center text-slate-500">Chantier non trouvé</p>;
 
-  const handleChange = (field: string, value: string) => {
-    setConstruction({
-      ...construction,
-      [field]: sanitizeInput(field, value),
-    });
-  };
 
-  const handleChefChange = (managerId: string) => {
-    setConstruction({
-      ...construction,
-      chefDeProjet: {
-        user_id: parseInt(managerId, 10),
-      },
-    });
-  };
-
-  const handleSave = async () => {
-    try {
-      await constructionSiteService.update(construction.construction_site_id, {
-        name: construction.name,
-        adresse: construction.adresse,
-        description: construction.description,
-        start_date: construction.start_date,
-        end_date: construction.end_date,
-        open_time: construction.open_time,
-        end_time: construction.end_time,
-        chef_de_projet_id: construction.chefDeProjet?.user_id || null,
-      });
-      const updatedData = await constructionSiteService.getById(Number(id));
-      setConstruction(updatedData);
-      setIsEditing(false);
-    } catch (err) {
-      console.error("Erreur lors de la mise à jour :", err);
-      alert("Une erreur est survenue lors de la sauvegarde.");
-    }
-  };
 
     return (
         <main className="min-h-[calc(100dvh-65px)] p-8 bg-gray-100">
