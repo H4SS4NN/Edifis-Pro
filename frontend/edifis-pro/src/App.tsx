@@ -16,6 +16,7 @@ import AddConstruction from "./pages/construction/AddConstruction";
 import ConstructionDetails from "./pages/construction/ConstructionDetails";
 import Missions from "./pages/mission/Missions";
 import CreateTask from "./pages/mission/addtask";
+import EditTask from "./pages/mission/EditTask";
 
 function App() {
     const { isAuthenticated } = useAuth();
@@ -28,6 +29,7 @@ function App() {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/missions" element={<Missions />} />
                     <Route path="/addamission" element={<CreateTask />} />
+                    <Route path="/editmission/:id" element={<EditTask />} />
                     <Route path="/construction" element={<Construction />} />
                     <Route
                         path="/ConstructionDetails/:id"
