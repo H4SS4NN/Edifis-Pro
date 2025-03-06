@@ -16,8 +16,26 @@ export default function AddWorker() {
     ];
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+        const { name, value } = e.target;
+        let newValue = value;
+      
+        if (name === "lastname") {
+          // 1) On autorise seulement lettres (accents inclus) et tirets
+          // 2) On force l'uppercase
+          newValue = newValue
+            .replace(/[^a-zA-ZÀ-ÖÙ-öù-ÿ-]/g, "")
+            .toUpperCase();
+        } else if (name === "firstname") {
+          // On autorise seulement lettres (accents inclus) et tirets
+          newValue = newValue.replace(/[^a-zA-ZÀ-ÖÙ-öù-ÿ-]/g, "");
+        }
+      
+        setFormData((prev) => ({
+          ...prev,
+          [name]: newValue,
+        }));
+      };
+      
 
     const handleCompetenceChange = (e) => {
         const value = parseInt(e.target.value);

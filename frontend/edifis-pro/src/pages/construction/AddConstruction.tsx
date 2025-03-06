@@ -30,22 +30,52 @@ export default function AddConstruction() {
     }, []);
 
     const handleChange = (
-        e: React.ChangeEvent<
-            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-        >
-    ) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setImage(e.target.files[0]);
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+      ) => {
+        let { name, value } = e.target;
+      
+        // Filtre du nom du chantier (autorise lettres, chiffres, espaces, tiret, underscore)
+        if (name === "name") {
+          value = value.replace(/[^a-zA-Z0-9\s\-_]/g, "");
         }
+      
+        // Filtre de la description (retire < et >)
+        if (name === "description") {
+          value = value.replace(/[<>]/g, "");
+        }
+      
+        // Ex. Filtre de l'email
+        if (name === "email") {
+          value = value.replace(/[^a-zA-Z0-9_\-@.]/g, "");
+        }
+      
+        // Filtre de l'adresse (lettres, chiffres, espaces, virgule)
+        if (name === "address") {
+          value = value.replace(/[^a-zA-Z0-9\s,]/g, "");
+        }
+      
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      };
+      
+      
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files && e.target.files.length > 0) {
+        const file = e.target.files[0];
+        // Filtrage des extensions acceptées
+        const allowedExtensions = ["jpg", "jpeg", "png"];
+        const extension = file.name.split(".").pop()?.toLowerCase();
+    
+        if (extension && allowedExtensions.includes(extension)) {
+          setImage(file);
+        } else {
+          alert("Extension non autorisée. Veuillez sélectionner un fichier JPG, JPEG, ou PNG.");
+        }
+      }
     };
+      
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
