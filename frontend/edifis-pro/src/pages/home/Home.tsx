@@ -55,7 +55,11 @@ export default function Home() {
           Bienvenue, {user.firstname} {user.lastname}
         </h1>
         <h2 className="text-2xl font-semibold text-slate-950">
-          {user.role === "worker" ? "Ouvrier" : "Chef de projet"}
+          {user.role === "Admin"
+            ? "Administrateur"
+            : user.role === "Manager"
+            ? "Chef de projet"
+            : "Ouvrier"}
         </h2>
         <p className="text-sm text-slate-500">
           Voici un aperçu de votre tableau de bord

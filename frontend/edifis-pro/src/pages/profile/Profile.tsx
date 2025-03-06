@@ -1,9 +1,27 @@
-import LineChart from "../../components/lineChart/LineChart";
+import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import LineChart from "../../components/lineChart/LineChart";
 
 export default function Profile() {
-  const { user } = useAuth();
-  console.log(user);
+  const { user, updateUser } = useAuth(); // Ajout de `updateUser` pour mettre à jour le contexte
+  const [isEditing, setIsEditing] = useState(false);
+  const [updatedUser, setUpdatedUser] = useState({ ...user });
+
+  // Gère le changement des inputs
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUpdatedUser({ ...updatedUser, [e.target.name]: e.target.value });
+  };
+
+  // Fonction pour sauvegarder les changements
+  const handleSave = async () => {
+    try {
+      await updateUser(updatedUser); // Met à jour le contexte global
+      setIsEditing(false); // Désactive le mode édition après la mise à jour
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du profil :", error);
+    }
+  };
+
   return (
     <main className="min-h-[calc(100dvh-65px)] md:p-8 p-4">
       <div className="relative flex gap-8">
@@ -11,14 +29,44 @@ export default function Profile() {
           <img
             className="object-cover h-full w-full"
             src={user.profile_picture}
-            alt="Photo de profile"
+            alt="Photo de profil"
           />
         </div>
         <div>
           <h1 className="text-3xl font-medium">
-            {user.firstname + " " + user.lastname}
+            {isEditing ? (
+              <input
+                type="text"
+                name="firstname"
+                value={updatedUser.firstname}
+                onChange={handleChange}
+                className="border border-gray-300 rounded p-1"
+              />
+            ) : (
+              user.firstname
+            )}{" "}
+            {isEditing ? (
+              <input
+                type="text"
+                name="lastname"
+                value={updatedUser.lastname}
+                onChange={handleChange}
+                className="border border-gray-300 rounded p-1"
+              />
+            ) : (
+              user.lastname
+            )}
           </h1>
-          <p className="text-slate-500 text-base mb-5">{user.role}</p>
+          <p className="text-slate-500 text-base mb-5">
+            {user.role === "Admin"
+              ? "Admin"
+              : user.role === "Worker"
+              ? "Ouvrier"
+              : user.role === "Manager"
+              ? "Chef de projet"
+              : user.role}
+          </p>
+
           <h2>Informations</h2>
           <form className="flex gap-2">
             <label className="sr-only" htmlFor="email">
@@ -28,13 +76,12 @@ export default function Profile() {
               className="flex h-9 w-full rounded-md border border-neutral-200 bg-transparent px-3 py-1 text-sm transition-colors placeholder:text-black/60 focus-visible:outline-none focus-visible:ring focus-visible:ring-slate-500 disabled:cursor-not-allowed disabled:opacity-50"
               type="email"
               id="email"
-              autoCapitalize="none"
-              autoComplete="email"
-              autoCorrect="off"
-              value={user.email}
-              placeholder="Email"
-              readOnly
+              name="email"
+              value={updatedUser.email}
+              onChange={handleChange}
+              readOnly={!isEditing}
             />
+
             <label className="sr-only" htmlFor="tel">
               Téléphone
             </label>
@@ -42,19 +89,22 @@ export default function Profile() {
               className="flex h-9 w-full rounded-md border border-neutral-200 bg-transparent px-3 py-1 text-sm transition-colors placeholder:text-black/60 focus-visible:outline-none focus-visible:ring focus-visible:ring-slate-500 disabled:cursor-not-allowed disabled:opacity-50"
               type="tel"
               id="tel"
-              autoCapitalize="none"
-              autoComplete="tel"
-              autoCorrect="off"
-              value={user.numberphone}
-              placeholder="Téléphone"
-              readOnly
+              name="numberphone"
+              value={updatedUser.numberphone}
+              onChange={handleChange}
+              readOnly={!isEditing}
             />
           </form>
         </div>
-        <button className="absolute right-0 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm transition-colors focus-visible:outline-1 outline-offset-4 disabled:pointer-events-none disabled:opacity-50 bg-slate-200 text-slate-950 hover:bg-slate-300 h-9 py-2 pl-3.5 pr-4 cursor-pointer">
-          Modifier
+
+        <button
+          className="absolute right-0 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm transition-colors focus-visible:outline-1 outline-offset-4 disabled:pointer-events-none disabled:opacity-50 bg-slate-200 text-slate-950 hover:bg-slate-300 h-9 py-2 pl-3.5 pr-4 cursor-pointer"
+          onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
+        >
+          {isEditing ? "Sauvegarder" : "Modifier"}
         </button>
       </div>
+
       <div className="h-96 w-full py-8">
         <LineChart />
       </div>

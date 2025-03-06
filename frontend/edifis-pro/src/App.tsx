@@ -13,6 +13,8 @@ import NotFound from "./pages/notFound/NotFound";
 import Construction from "./pages/construction/Construction";
 import AddConstruction from "./pages/construction/AddConstruction";
 import ConstructionDetails from "./pages/construction/ConstructionDetails";
+import Missions from "./pages/mission/Missions";
+import CreateTask from "./pages/mission/addtask";
 
 function App() {
   const { isAuthenticated, user } = useAuth();
@@ -23,11 +25,14 @@ function App() {
         <Route element={<PageLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/missions" element={<Missions />} />
+          <Route path="/addamission" element={<CreateTask />} />
           <Route path="/construction" element={<Construction />} />
           <Route
             path="/ConstructionDetails/:id"
             element={<ConstructionDetails />}
           />
+
           <Route path="/AddConstruction" element={<AddConstruction />} />
           {/* Routes accessibles uniquement aux admins */}
           <Route element={<ProtectedRoute requiredRole="Admin" />}>

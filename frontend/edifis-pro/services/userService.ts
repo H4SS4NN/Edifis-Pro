@@ -19,6 +19,11 @@ const userService = {
     return await apiService.get<User[]>("/users/all/manager");
   },
 
+  // Mettre à jour un utilisateur
+  update: async (id: number, data: Partial<User>): Promise<User> => {
+    return await apiService.put<User>(`/users/${id}`, data);
+  },
+
   // Récupérer tous les utilisateurs
   getAllUsers: async (): Promise<User[]> => {
     return await apiService.get<User[]>("/users/all");

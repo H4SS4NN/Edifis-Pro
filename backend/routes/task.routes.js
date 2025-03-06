@@ -9,6 +9,7 @@ router.get("/:id", taskController.getTaskById);
 router.put("/:id", taskController.updateTask);
 router.delete("/:id", taskController.deleteTask);
 router.post("/assign", taskController.assignUsersToTask);
+router.get("/user/:userId", taskController.getTasksByUserId);
 
 
 module.exports = router;

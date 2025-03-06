@@ -10,15 +10,23 @@ exports.createTask = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
 exports.getAllTasks = async (req, res) => {
     try {
-        const tasks = await Task.findAll();
+        const tasks = await Task.findAll({
+            include: [
+                {
+                    model: User,
+                    through: { attributes: [] },
+                    attributes: ["user_id", "firstname", "lastname", "email", "profile_picture"]
+                }
+            ]
+        });
         res.json(tasks);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 exports.getTaskById = async (req, res) => {
     try {
@@ -29,6 +37,10 @@ exports.getTaskById = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+// task by userid
+
+
 
 exports.updateTask = async (req, res) => {
     try {
@@ -60,6 +72,8 @@ exports.deleteTask = async (req, res) => {
 exports.assignUsersToTask = async (req, res) => {
     try {
         const { taskId, userIds } = req.body;
+        console.log(req.body
+        );
 
         if (!taskId || !userIds || userIds.length === 0) {
             return res.status(400).json({ message: "L'ID de la tâche et au moins un utilisateur sont requis" });
@@ -79,6 +93,34 @@ exports.assignUsersToTask = async (req, res) => {
         res.json({ message: "Tâche assignée avec succès", task });
     } catch (error) {
         console.error("Erreur lors de l'assignation des utilisateurs :", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
+exports.getTasksByUserId = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        const tasks = await Task.findAll({
+            include: [
+                {
+                    model: User,
+                    through: { attributes: [] },
+                    where: { user_id: userId }, // Filtrer les tâches par utilisateur
+                    attributes: ["user_id", "firstname", "lastname", "email"]
+                }
+            ]
+        });
+
+
+        res.json(tasks);
+    } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
