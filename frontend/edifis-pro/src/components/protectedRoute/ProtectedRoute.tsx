@@ -2,36 +2,35 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useEffect, useState } from "react";
 
-import Loading from "../loading/Loading";
+interface ProtectedRouteProps {
+    requiredRole?: string; // Rôle optionnel à vérifier
+}
 
-const ProtectedRoute = () => {
-    const { isAuthenticated } = useAuth();
+const ProtectedRoute = ({ requiredRole }: ProtectedRouteProps) => {
+    const { isAuthenticated, user } = useAuth();
     const [loading, setLoading] = useState(true);
+
     useEffect(() => {
-        if (!isAuthenticated) {
-            const timer = setTimeout(() => {
-                setLoading(false);
-            }, 50);
-            
-            return () => clearTimeout(timer);
-        } else {
+        const timer = setTimeout(() => {
             setLoading(false);
-        }
-    }, [isAuthenticated]);
+        }, 50);
+        return () => clearTimeout(timer);
+    }, []);
 
     if (loading) {
-        return (
-            <div className="flex items-center justify-center h-dvh w-full">
-                <Loading />
-            </div>
-        );
+        return <div>Chargement...</div>; // Loader temporaire
     }
 
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
     }
 
-    return <Outlet />;
+    // Vérification du rôle si nécessaire
+    if (requiredRole && user?.role !== requiredRole) {
+        return <Navigate to="/" replace />; // Redirige vers l'accueil si l'utilisateur n'a pas le bon rôle
+    }
+
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

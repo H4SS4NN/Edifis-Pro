@@ -8,12 +8,15 @@ const protect = (req, res, next) => {
         }
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+        console.log("Utilisateur connecté :", decoded); 
+
         req.user = decoded;
         next();
     } catch (error) {
         res.status(401).json({ message: "Token invalide" });
     }
 };
+
 
 // Middleware pour vérifier si l'utilisateur est Admin
 const isAdmin = (req, res, next) => {
