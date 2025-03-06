@@ -62,11 +62,33 @@ export default function WorkerDetails() {
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => {
-        setWorker((prevWorker) =>
-            prevWorker ? { ...prevWorker, [e.target.name]: e.target.value } : null
-        );
-    };
+      ) => {
+        setWorker((prevWorker) => {
+          if (!prevWorker) return null;
+      
+          const { name, value } = e.target;
+          let newValue = value;
+      
+          // Autorise uniquement lettres (avec accents) et tiret
+          // Retire tout autre caractère
+          if (name === "firstname") {
+            // Filtrage du prénom
+            newValue = newValue.replace(/[^a-zA-ZÀ-ÖÙ-öù-ÿ-]/g, "");
+          } else if (name === "lastname") {
+            // Filtrage du nom (puis conversion en majuscules)
+            newValue = newValue
+              .replace(/[^a-zA-ZÀ-ÖÙ-öù-ÿ-]/g, "")
+              .toUpperCase();
+          }
+      
+          return {
+            ...prevWorker,
+            [name]: newValue,
+          };
+        });
+      };
+      
+      
     const handleDelete = async () => {
         if (window.confirm("Êtes-vous sûr de vouloir supprimer cet employé ?")) {
             try {
@@ -119,20 +141,35 @@ export default function WorkerDetails() {
                         alt={worker.firstname}
                         className="w-24 h-24 object-cover rounded-full mr-4"
                     />
-                    <div>
-                        {isEditing ? (
-                            <input
-                                type="text"
-                                name="firstname"
-                                value={worker.firstname}
-                                onChange={handleChange}
-                                className="text-xl font-semibold text-gray-900 mb-2 border-b border-gray-300"
-                            />
-                        ) : (
-                            <h2 className="text-xl font-semibold text-gray-900">
-                                {worker.firstname} {worker.lastname}
-                            </h2>
-                        )}
+                    <div style={{display:"flex", flexDirection:"column"}}>
+                        <div>
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    name="firstname"
+                                    value={worker.firstname}
+                                    onChange={handleChange}
+                                    className="text-xl font-semibold text-gray-900 mb-2 border-b border-gray-300"
+                                />
+                            ) : (
+                                <></>
+                            )}
+                        </div>
+                        <div>
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    name="lastname"
+                                    value={worker.lastname}
+                                    onChange={handleChange}
+                                    className="text-xl font-semibold text-gray-900 mb-2 border-b border-gray-300"
+                                />
+                            ) : (
+                                <h2 className="text-xl font-semibold text-gray-900">
+                                    {worker.firstname} {worker.lastname}
+                                </h2>
+                            )}
+                        </div>
                     </div>
                 </div>
 
