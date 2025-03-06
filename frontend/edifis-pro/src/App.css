@@ -7,3 +7,7 @@
 a.active {
     background-color: #E2E8F0;
 }
+
+.scrollbar-thin {
+    scrollbar-width: thin;
+}

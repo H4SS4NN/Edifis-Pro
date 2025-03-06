@@ -4,6 +4,8 @@ import constructionSiteService, {
     ConstructionSite,
 } from "../../../services/constructionSiteService";
 
+import Loading from "../../components/loading/Loading";
+
 export default function Home() {
     const [projects, setProjects] = useState<ConstructionSite[]>([]);
     const [loading, setLoading] = useState(true);
@@ -43,13 +45,15 @@ export default function Home() {
 
     if (loading)
         return (
-            <p className="text-center text-gray-500">Chargement des chantiers...</p>
+            <div className="flex items-center justify-center min-h-[calc(100dvh-65px)] w-full p-8">
+                <Loading />
+            </div>
         );
     if (error)
         return <p className="text-center text-red-500">Erreur : {error}</p>;
 
     return (
-        <main className="min-h-screen p-8 bg-gray-100">
+        <main className="min-h-[calc(100dvh-65px)] p-8 bg-gray-100">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-4xl font-bold text-gray-900">Chantiers</h1>
                 <Link

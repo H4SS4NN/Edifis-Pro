@@ -49,8 +49,8 @@ export default function Chart() {
             >
                 <defs>
                     <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+                        <stop offset="5%" stopColor="#FF6900" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#FF6900" stopOpacity={0} />
                     </linearGradient>
                 </defs>
                 <XAxis
@@ -65,7 +65,7 @@ export default function Chart() {
                 <Area
                     type="monotone"
                     dataKey="value"
-                    stroke="#8884d8"
+                    stroke="#FF6900"
                     fillOpacity={1}
                     fill="url(#colorUv)"
                 />
