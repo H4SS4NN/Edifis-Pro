@@ -4,20 +4,24 @@ import taskService, { Task } from "../../../services/taskService";
 import userService, { User } from "../../../services/userService";
 import constructionService, { ConstructionSite } from "../../../services/constructionSiteService";
 
+// Petite fonction utilitaire pour transformer une date ISO en format "YYYY-MM-DDTHH:MM"
+function toDateTimeLocal(isoString?: string): string {
+  if (!isoString) return "";
+  const date = new Date(isoString);
+  // .slice(0,16) pour avoir "YYYY-MM-DDTHH:MM"
+  return date.toISOString().slice(0, 16);
+}
+
 export default function EditTask() {
-  // L'ID provient des paramètres de l'URL et sera converti en nombre
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // États
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [status, setStatus] = useState<string>("En attente");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
-  // Utilisation de number[] pour les IDs des utilisateurs assignés
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
-  // Pour le chantier, on utilise number | null (null si aucun chantier n'est sélectionné)
   const [selectedConstruction, setSelectedConstruction] = useState<number | null>(null);
 
   const [users, setUsers] = useState<User[]>([]);
@@ -32,14 +36,14 @@ export default function EditTask() {
         setName(task.name || "");
         setDescription(task.description || "");
         setStatus(task.status || "En attente");
-        // Transformation des dates pour le format attendu par l'input date
-        setStartDate(task.start_date ? task.start_date.split("T")[0] : "");
-        setEndDate(task.end_date ? task.end_date.split("T")[0] : "");
+        
+        // Conversion de la date ISO (ex: "2025-03-19T16:18:15.000Z") vers "YYYY-MM-DDTHH:MM"
+        setStartDate(toDateTimeLocal(task.start_date));
+        setEndDate(toDateTimeLocal(task.end_date));
+
         setSelectedConstruction(task.construction_site_id || null);
-        // On suppose que task.users est un tableau d'objets User
-        setSelectedUsers(task.users.map((user: User) => user.user_id));
-      } 
-      catch {
+        setSelectedUsers(task.users.map((u) => u.user_id));
+      } catch {
         setError("Erreur lors du chargement de la mission.");
       }
     };
@@ -103,6 +107,7 @@ export default function EditTask() {
     <main className="min-h-screen p-8 bg-gray-100">
       <h1 className="text-4xl font-bold text-gray-900 mb-6">Modifier la Mission</h1>
       {error && <p className="text-red-500">{error}</p>}
+      
       <form onSubmit={handleSubmit} className="bg-white p-6 shadow-lg rounded-lg">
         <div className="mb-4">
           <label className="block text-gray-700">Nom :</label>
@@ -122,7 +127,7 @@ export default function EditTask() {
             onChange={(e) => setDescription(e.target.value)} 
             required 
             className="w-full p-2 border border-gray-300 rounded-lg"
-          ></textarea>
+          />
         </div>
 
         <div className="mb-4">
@@ -140,7 +145,7 @@ export default function EditTask() {
 
         <div className="mb-4">
           <label className="block text-gray-700">Chantier :</label>
-          <select 
+          <select
             value={selectedConstruction || ""}
             onChange={(e) => setSelectedConstruction(Number(e.target.value))}
             className="w-full p-2 border border-gray-300 rounded-lg"
@@ -158,10 +163,11 @@ export default function EditTask() {
           </select>
         </div>
 
+        {/* Remplacement de type="date" par type="datetime-local" */}
         <div className="mb-4">
-          <label className="block text-gray-700">Date de début :</label>
+          <label className="block text-gray-700">Date et heure de début :</label>
           <input
-            type="date"
+            type="datetime-local"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             required
@@ -170,9 +176,9 @@ export default function EditTask() {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700">Date de fin :</label>
+          <label className="block text-gray-700">Date et heure de fin :</label>
           <input
-            type="date"
+            type="datetime-local"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             required
@@ -191,6 +197,9 @@ export default function EditTask() {
             {users.map((user) => (
               <option key={user.user_id} value={user.user_id}>
                 {user.firstname} {user.lastname}
+                {user.competences && user.competences.length > 0 && (
+                  <> - {user.competences.map(c => c.name).join(", ")}</>
+                )}
               </option>
             ))}
           </select>
