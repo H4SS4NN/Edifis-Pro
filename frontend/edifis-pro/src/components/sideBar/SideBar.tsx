@@ -78,7 +78,7 @@ export default function SideBar() {
         {!loading && user && (
           <button
             onClick={handleBadge}
-            className="inline-flex items-center justify-center p-2 rounded-full transition-colors focus:outline-none"
+            className="inline-flex items-center justify-center p-2 rounded-full transition-colors focus:outline-none w-full"
           >
             <svg
               width="242"

@@ -42,7 +42,7 @@ export default function EditTask() {
         // Transformation des dates pour le format attendu par l'input date
         setStartDate(task.start_date ? task.start_date.split("T")[0] : "");
         setEndDate(task.end_date ? task.end_date.split("T")[0] : "");
-        setSelectedConstruction(task.construction_site_id || null);
+        setSelectedConstruction(task.task_id || null);
         // On suppose que task.users est un tableau d'objets User
         setSelectedUsers(task.users.map((user: User) => user.user_id));
       } catch {
@@ -85,7 +85,7 @@ export default function EditTask() {
         status,
         start_date: startDate,
         end_date: endDate,
-        construction_site_id: selectedConstruction,
+        task_id: selectedConstruction,
       });
 
       if (selectedUsers.length > 0) {
@@ -145,9 +145,10 @@ export default function EditTask() {
             onChange={(e) => setStatus(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg"
           >
-            <option value="En attente">En attente</option>
+            <option value="Prévu">Prévu</option>
             <option value="En cours">En cours</option>
-            <option value="Terminée">Terminée</option>
+            <option value="Annulé">Annulé</option>
+            <option value="Terminé">Terminé</option>
           </select>
         </div>
 

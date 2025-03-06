@@ -32,7 +32,7 @@ jest.mock("../../config/database", () => {
       // Vérification du champ state (ENUM)
       expect(attributes).toHaveProperty("state");
       expect(attributes.state.allowNull).toBe(false);
-      expect(attributes.state.values).toEqual(["En cours", "Terminé", "Annulé", "Prevu"]);
+      expect(attributes.state.values).toEqual(["En cours", "Terminé", "Annulé", "Prévu"]);
   
       // Vérification du champ description (TEXT)
       expect(attributes).toHaveProperty("description");

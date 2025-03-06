@@ -101,7 +101,7 @@ export default function Profile() {
                         </h1>
                         <p className="text-slate-500 text-base">
                             {user.role === "Admin"
-                                ? "Admin"
+                                ? "Responsable"
                                 : user.role === "Worker"
                                 ? "Ouvrier"
                                 : user.role === "Manager"

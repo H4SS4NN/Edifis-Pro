@@ -57,6 +57,7 @@ export default function Home() {
       </div>
       <div className="flex flex-col min-h-0 h-full overflow-y-auto space-y-4 scrollbar-thin">
         <h2 className="text-xl font-semibold text-slate-950">Vos missions</h2>
+        {tasks.length === 0 && <p className="text-slate-500">Aucune mission pour le moment.</p>}
         {tasks.map((task) => (
           <div
             key={task.id}

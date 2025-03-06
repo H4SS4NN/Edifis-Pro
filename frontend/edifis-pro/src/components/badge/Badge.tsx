@@ -1,13 +1,13 @@
 import { CalendarClock, Loader2, Check, Ban  } from "lucide-react";
 
 interface BadgeProps {
-    status: "Prévu" | "En cours" | "Annulé" | "Terminée";
+    status: "Prévu" | "En cours" | "Annulé" | "Terminé";
 }
 
 export default function Badge({ status }: BadgeProps) {
     const statusConfig = {
         "Prévu": {
-            text: "À venir",
+            text: "Prévu",
             icon: <CalendarClock size={12} />,
             colorClass: "text-blue-900 bg-blue-100",
         },
@@ -17,12 +17,12 @@ export default function Badge({ status }: BadgeProps) {
             colorClass: "text-yellow-900 bg-yellow-100",
         },
         "Annulé": {
-            text: "Annulée",
+            text: "Annulé",
             icon: <Ban size={12} />,
             colorClass: "text-red-900 bg-red-100",
         },
         "Terminé": {
-            text: "Terminé(e)",
+            text: "Terminé",
             icon: <Check size={12} />,
             colorClass: "text-green-900 bg-green-100",
         },

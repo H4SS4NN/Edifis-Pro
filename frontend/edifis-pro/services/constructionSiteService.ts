@@ -1,78 +1,50 @@
 import apiService from "./apiService";
 
-// Interface pour un chantier
 export interface ConstructionSite {
-    id: number;
-    name: string;
-    description: string;
-    address: string;
-    managerId: number;
-    status: string;
-    startDate: string;
-    endDate: string;
-    image_url?: string;
+  construction_site_id?: number;
+  name: string;
+  description?: string;
+  adresse?: string;
+  state?: "En cours" | "Terminé" | "Annulé" | "Prevu";
+  start_date?: string; // stockées en "YYYY-MM-DD"
+  end_date?: string;
+  image_url?: string;
+  chef_de_projet_id?: number; // manager
 }
 
 // Service pour gérer les chantiers
 const constructionSiteService = {
-    // Ajouter un chantier avec une image
-    create: async (
-        data: Omit<ConstructionSite, "id">,
-        imageFile?: File
-    ): Promise<ConstructionSite> => {
-        const formData = new FormData();
+  // Ajouter un chantier (avec image) via multipart/form-data
+  create: async (formData: FormData): Promise<ConstructionSite> => {
+    // ICI on utilise la méthode postForm (multipart), pas un JSON classique
+    return await apiService.postForm<ConstructionSite>(
+      "/construction-sites",
+      formData
+    );
+  },
 
-        // ✅ Transformer correctement les valeurs AVANT de les ajouter à FormData
-        Object.entries(data).forEach(([key, value]) => {
-            if (value !== undefined && value !== null) {
-                formData.append(key, String(value)); // 🔥 Convertir toutes les valeurs en string
-            }
-        });
+  // Mettre à jour un chantier (JSON, si tu as besoin)
+  update: async (
+    id: number,
+    data: Partial<ConstructionSite>
+  ): Promise<ConstructionSite> => {
+    return await apiService.put<ConstructionSite>(`/construction-sites/${id}`, data);
+  },
 
-        // ✅ Ajouter l'image si elle existe
-        if (imageFile) {
-            formData.append("image", imageFile);
-        }
+  // Supprimer un chantier
+  delete: async (id: number): Promise<void> => {
+    return await apiService.delete<void>(`/construction-sites/${id}`);
+  },
 
-        // 🚀 Log avant l’envoi au backend
-        console.log("🔼 FormData envoyé :", Object.fromEntries(formData));
+  // Récupérer tous les chantiers
+  getAll: async (): Promise<ConstructionSite[]> => {
+    return await apiService.get<ConstructionSite[]>("/construction-sites");
+  },
 
-        return await apiService.post<ConstructionSite>(
-            "/construction-sites",
-            formData,
-            {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }
-        );
-    },
-
-    // Mettre à jour un chantier (corrigé)
-    update: async (
-        id: number,
-        data: Partial<ConstructionSite>
-    ): Promise<ConstructionSite> => {
-        return await apiService.put<ConstructionSite>(
-            `/construction-sites/${id}`,
-            data
-        );
-    },
-
-    // Supprimer un chantier
-    delete: async (id: number): Promise<void> => {
-        return await apiService.delete<void>(`/construction-sites/${id}`);
-    },
-
-    // Récupérer tous les chantiers
-    getAll: async (): Promise<ConstructionSite[]> => {
-        return await apiService.get<ConstructionSite[]>("/construction-sites");
-    },
-
-    // Récupérer un chantier par ID
-    getById: async (id: number): Promise<ConstructionSite> => {
-        return await apiService.get<ConstructionSite>(`/construction-sites/${id}`);
-    },
+  // Récupérer un chantier par ID
+  getById: async (id: number): Promise<ConstructionSite> => {
+    return await apiService.get<ConstructionSite>(`/construction-sites/${id}`);
+  },
 };
 
 export default constructionSiteService;
