@@ -129,6 +129,30 @@ export default function Missions() {
                   </ul>
                 )}
               </div>
+              <div className="mb-4">
+                <h1 className="text-xl font-semibold text-gray-900">
+                  <strong>Chantier :</strong> {task.construction_site.name}
+                </h1>
+                <p className="text-gray-700">
+                  <strong>📅 Début du chantier :</strong>{" "}
+                  {task.construction_site.start_date
+                    ? new Date(
+                        task.construction_site.start_date
+                      ).toLocaleDateString()
+                    : "Non défini"}
+                </p>
+                <p className="text-gray-700">
+                  <strong>📅 Fin du chantier :</strong>{" "}
+                  {task.construction_site.end_date
+                    ? new Date(
+                        task.construction_site.end_date
+                      ).toLocaleDateString()
+                    : "Non défini"}
+                </p>
+                <p className="text-gray-700">
+                  <strong>📍 Adresse :</strong> {task.construction_site.adresse}
+                </p>
+              </div>
               {/* Bouton Modifier */}
               {(user.role === "Admin" || user.role === "Manager") && (
                 <Link
