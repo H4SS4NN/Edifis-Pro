@@ -41,7 +41,7 @@ export default function EditTask() {
         setStartDate(toDateTimeLocal(task.start_date));
         setEndDate(toDateTimeLocal(task.end_date));
 
-        setSelectedConstruction(task.construction_site_id || null);
+        setSelectedConstruction(task.task_id || null);
         setSelectedUsers(task.users.map((u) => u.user_id));
       } catch {
         setError("Erreur lors du chargement de la mission.");
@@ -83,7 +83,7 @@ export default function EditTask() {
         status,
         start_date: startDate,
         end_date: endDate,
-        construction_site_id: selectedConstruction,
+        task_id: selectedConstruction,
       });
 
       if (selectedUsers.length > 0) {
@@ -137,9 +137,10 @@ export default function EditTask() {
             onChange={(e) => setStatus(e.target.value)} 
             className="w-full p-2 border border-gray-300 rounded-lg"
           >
-            <option value="En attente">En attente</option>
+            <option value="Prévu">Prévu</option>
             <option value="En cours">En cours</option>
-            <option value="Terminée">Terminée</option>
+            <option value="Annulé">Annulé</option>
+            <option value="Terminé">Terminé</option>
           </select>
         </div>
 

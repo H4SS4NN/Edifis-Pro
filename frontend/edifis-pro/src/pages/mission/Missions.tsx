@@ -96,12 +96,12 @@ export default function Missions() {
                 className={`text-sm font-bold mt-2 ${
                   task.status === "En cours"
                     ? "text-yellow-600"
-                    : task.status === "Terminée"
+                    : task.status === "Terminé"
                     ? "text-green-600"
                     : "text-red-600"
                 }`}
               >
-                <strong>Status :</strong> {task.status}
+                <strong>Statut :</strong> {task.status}
               </p>
               {/* Affichage des utilisateurs assignés */}
               <div className="mt-4">
