@@ -46,9 +46,6 @@ export default function Missions() {
   if (loading)
     return <p className="text-center text-gray-500">Chargement...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
-  if (tasks.length === 0)
-    return <p className="text-center text-gray-500">Aucune mission trouvée.</p>;
-
   return (
     <main className="min-h-screen p-8 bg-gray-100">
       <div className="flex justify-between items-center mb-6">
@@ -62,6 +59,10 @@ export default function Missions() {
           </Link>
         )}
       </div>
+
+      {tasks.length === 0 && (
+        <p className="text-center text-gray-500">Aucune mission trouvée.</p>
+      )}
 
       <input
         type="text"

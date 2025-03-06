@@ -21,7 +21,8 @@ export default function CreateTask() {
 
   const [users, setUsers] = useState([]);
   const [constructions, setConstructions] = useState([]);
-
+  const [minStartDate, setMinStartDate] = useState<string>("");
+  const [maxEndDate, setMaxEndDate] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   useEffect(() => {
@@ -55,26 +56,70 @@ export default function CreateTask() {
     fetchUsers();
     fetchConstructions();
   }, [user]);
+  // Fonction pour s'assurer que les dates respectent le format "YYYY-MM-DDTHH:MM"
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return "";
+    return `${dateString}T00:00`; // Ajoute "T00:00" par défaut si l'heure est absente
+  };
+
+  const handleConstructionChange = (e) => {
+    const selectedId = Number(e.target.value);
+    setSelectedConstruction(selectedId);
+
+    const selectedConstructionData = constructions.find(
+      (c) => c.construction_site_id === selectedId
+    );
+
+    if (selectedConstructionData) {
+      // Appliquer la transformation pour que les dates respectent le format requis
+      setMinStartDate(formatDateForInput(selectedConstructionData.start_date));
+      setMaxEndDate(formatDateForInput(selectedConstructionData.end_date));
+
+      // Réinitialiser les dates de la mission avec un format valide
+      setStartDate(formatDateForInput(selectedConstructionData.start_date));
+      setEndDate(formatDateForInput(selectedConstructionData.end_date));
+    }
+  };
+
+  console.log("hello", startDate, endDate);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    try {
-      if (!selectedConstruction) {
-        setError("Veuillez sélectionner un chantier.");
-        setLoading(false);
-        return;
-      }
+    // Vérifier qu'un chantier est sélectionné
+    if (!selectedConstruction) {
+      setError("Veuillez sélectionner un chantier.");
+      setLoading(false);
+      return;
+    }
 
+    // Vérification des dates
+    if (startDate < minStartDate) {
+      setError(`La date de début ne peut pas être avant ${minStartDate}`);
+      setLoading(false);
+      return;
+    }
+    if (endDate > maxEndDate) {
+      setError(`La date de fin ne peut pas être après ${maxEndDate}`);
+      setLoading(false);
+      return;
+    }
+    if (startDate > endDate) {
+      setError("La date de début doit être avant la date de fin.");
+      setLoading(false);
+      return;
+    }
+
+    try {
       const newTask = await taskService.create({
         name,
         description,
         status,
         start_date: startDate,
         end_date: endDate,
-        construction_site_id: selectedConstruction, // Ajout du chantier
+        construction_site_id: selectedConstruction,
       });
 
       if (selectedUsers.length > 0) {
@@ -138,7 +183,7 @@ export default function CreateTask() {
           <label className="block text-gray-700">Chantier :</label>
           <select
             value={selectedConstruction || ""}
-            onChange={(e) => setSelectedConstruction(Number(e.target.value))}
+            onChange={handleConstructionChange}
             className="w-full p-2 border border-gray-300 rounded-lg"
             required
           >
@@ -163,6 +208,8 @@ export default function CreateTask() {
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             required
+            min={minStartDate}
+            max={maxEndDate}
             className="w-full p-2 border border-gray-300 rounded-lg"
           />
         </div>
@@ -174,6 +221,8 @@ export default function CreateTask() {
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             required
+            min={startDate}
+            max={maxEndDate}
             className="w-full p-2 border border-gray-300 rounded-lg"
           />
         </div>
@@ -196,7 +245,7 @@ export default function CreateTask() {
               <option key={user.user_id} value={user.user_id}>
                 {user.firstname} {user.lastname}
                 {user.competences && user.competences.length > 0 && (
-                  <> - {user.competences.map(c => c.name).join(", ")}</>
+                  <> - {user.competences.map((c) => c.name).join(", ")}</>
                 )}
               </option>
             ))}
