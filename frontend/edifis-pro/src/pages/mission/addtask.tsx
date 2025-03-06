@@ -147,9 +147,11 @@ export default function CreateTask() {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700">Date de début :</label>
+          <label className="block text-gray-700">
+            Date et heure de début :
+          </label>
           <input
-            type="date"
+            type="datetime-local"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             required
@@ -157,10 +159,10 @@ export default function CreateTask() {
           />
         </div>
 
-        <div>
-          <label className="block text-gray-700">Date de fin :</label>
+        <div className="mb-4">
+          <label className="block text-gray-700">Date et heure de fin :</label>
           <input
-            type="date"
+            type="datetime-local"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             required

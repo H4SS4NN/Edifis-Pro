@@ -80,13 +80,18 @@ export default function Missions() {
             >
               <h2 className="text-2xl font-semibold text-gray-900 mb-2">{task.name}</h2>
               <p className="text-gray-700">{task.description}</p>
-
-              <p className="text-sm text-gray-600 mt-2">
-                <strong>📅 Début :</strong> {task.start_date || "Non défini"}
-              </p>
+              <p className="text-sm text-gray-600 mt-2"></p>
               <p className="text-sm text-gray-600">
-                <strong>⏳ Fin :</strong> {task.end_date || "Non défini"}
+                <strong>📅 Début :</strong>{" "}
+                {task.start_date
+                  ? new Date(task.start_date).toLocaleString()
+                  : "Non défini"}
               </p>
+              <p className="text-sm text-gray-600"></p>
+              <strong>⏳ Fin :</strong>{" "}
+              {task.end_date
+                ? new Date(task.end_date).toLocaleString()
+                : "Non défini"}
               <p
                 className={`text-sm font-bold mt-2 ${
                   task.status === "En cours"
@@ -98,7 +103,6 @@ export default function Missions() {
               >
                 <strong>Status :</strong> {task.status}
               </p>
-
               {/* Affichage des utilisateurs assignés */}
               <div className="mt-4">
                 <strong className="text-gray-800">👥 Assigné à :</strong>
