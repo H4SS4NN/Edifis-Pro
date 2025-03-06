@@ -22,9 +22,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     const [tokenId, setTokenId] = useState<any>(null);
     const navigate = useNavigate();
 
-    console.table(user);
-
-
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {

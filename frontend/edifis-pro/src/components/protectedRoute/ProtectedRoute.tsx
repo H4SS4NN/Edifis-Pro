@@ -2,6 +2,8 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useEffect, useState } from "react";
 
+import Loading from "../loading/Loading";
+
 interface ProtectedRouteProps {
     requiredRole?: string; // Rôle optionnel à vérifier
 }
@@ -13,12 +15,16 @@ const ProtectedRoute = ({ requiredRole }: ProtectedRouteProps) => {
     useEffect(() => {
         const timer = setTimeout(() => {
             setLoading(false);
-        }, 50);
+        }, 300);
         return () => clearTimeout(timer);
     }, []);
 
     if (loading) {
-        return <div>Chargement...</div>; // Loader temporaire
+        return (
+            <div className="h-screen flex justify-center items-center">
+                <Loading />
+            </div>
+        )
     }
 
     if (!isAuthenticated) {

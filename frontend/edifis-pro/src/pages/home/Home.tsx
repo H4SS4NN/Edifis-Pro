@@ -98,7 +98,7 @@ const tasks: Task[] = [
 export default function Home() {
 	const { user } = useAuth();
 	return (
-		<main className="grid xl:grid-cols-[7fr_3fr] grid-cols-1 gap-8 max-h-[calc(100dvh-65px)] h-full bg-gray-100 md:p-8 p-4 overflow-hidden">
+		<main className="grid xl:grid-cols-[7fr_3fr] grid-cols-1 gap-8 xl:max-h-[calc(100dvh-65px)] h-full bg-gray-100 md:p-8 p-4 overflow-hidden">
 			<div className="flex flex-col min-h-0">
 				<div className="mb-10">
 					<h1 className="text-4xl font-bold text-slate-950">Bienvenue, {user.firstname} {user.lastname}</h1>
