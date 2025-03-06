@@ -1,43 +1,46 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import protect from '../../middlewares/auth.middleware';
+import { Request, Response, NextFunction } from "express";
+import { protect, isAdmin, isWorker, isManager } from "../../middlewares/auth.middleware";
+import jwt from "jsonwebtoken";
 
-describe('Middleware de protection', () => {
+describe("Auth Middleware", () => {
   let req: Partial<Request>;
   let res: Partial<Response>;
   let next: NextFunction;
 
   beforeEach(() => {
-    req = {};
+    req = { headers: {} };
     res = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
+      json: jest.fn()
     };
     next = jest.fn();
-    process.env.JWT_SECRET = 'test_secret';
   });
 
-  it('doit retourner une erreur 401 si le token est manquant', () => {
-    req.headers = {};
+  it("devrait renvoyer 401 si aucun token n'est fourni", () => {
+    // Ici, req.headers est garanti d'exister
     protect(req as Request, res as Response, next);
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ message: "Accès refusé. Token manquant" });
   });
 
-  it('doit retourner une erreur 401 si le token est invalide', () => {
-    req.headers = { authorization: 'Bearer token_invalide' };
+  it("devrait appeler next() si le token est valide", () => {
+    // Utilisation de l'opérateur non-null (!) pour indiquer à TypeScript que headers est défini
+    req.headers!.authorization = "Bearer validtoken";
+    // Utilisation de mockImplementation pour que jwt.verify retourne l'objet attendu
+    jest.spyOn(jwt, "verify").mockImplementation(() => ({ userId: 1, role: 2 }));
+    protect(req as Request, res as Response, next);
+    // @ts-ignore : Ajouté car la propriété "user" n'existe pas par défaut sur Request
+    expect(req.user).toEqual({ userId: 1, role: 2 });
+    expect(next).toHaveBeenCalled();
+  });
+
+  it("devrait renvoyer 401 si le token est invalide", () => {
+    req.headers!.authorization = "Bearer invalidtoken";
+    jest.spyOn(jwt, "verify").mockImplementation(() => {
+      throw new Error("Invalid token");
+    });
     protect(req as Request, res as Response, next);
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ message: "Token invalide" });
-  });
-
-  it('doit appeler next() et ajouter req.user si le token est valide', () => {
-    const payload = { id: 1, nom: 'Utilisateur test' };
-    const token = jwt.sign(payload, process.env.JWT_SECRET!);
-    req.headers = { authorization: `Bearer ${token}` };
-
-    protect(req as Request, res as Response, next);
-    expect(req.user).toEqual(expect.objectContaining(payload));
-    expect(next).toHaveBeenCalled();
   });
 });

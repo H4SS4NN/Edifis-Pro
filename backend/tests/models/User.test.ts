@@ -45,6 +45,7 @@ jest.mock("../../config/database", () => {
         firstname: "Test",
         lastname: "User",
         email: "test@example.com",
+        numberphone: "0123456789" ,
         password: "password",
       });
       const userJSON = user.toJSON();

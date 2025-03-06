@@ -5,7 +5,7 @@ import { House, Construction, Hammer, UserRound, LogOut } from "lucide-react";
 
 const routes = [
   { to: "/", label: "Accueil", Icon: House },
-  { to: "/missions", label: "Mission", Icon: Hammer },
+  { to: "/missions", label: "Missions", Icon: Hammer },
   { to: "/construction", label: "Chantiers", Icon: Construction },
 ];
 

@@ -67,7 +67,7 @@ export default function Login() {
                             <Link to='/' className="flex justify-center items-center text-2xl font-semibold text-slate-950 uppercase">
                                 Edifis <span className="font-light">Pro</span>
                             </Link>
-                            <p className="text-sm text-slate-500">Entrer vos identifiants pour vous connecter</p>
+                            <p className="text-sm text-slate-500">Entrez vos identifiants pour vous connecter</p>
                         </div>
                         <div className="grid gap-6">
                             <form onSubmit={handleSubmit}>
