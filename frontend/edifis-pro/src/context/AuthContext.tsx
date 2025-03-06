@@ -88,7 +88,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         updatedUser
       );
       if (response) {
-        setUser(response);
+        setUser((prevUser: any) => ({
+          ...prevUser,
+          ...updatedUser, // Mise à jour locale de l'utilisateur dans le contexte
+        }));
         console.log("Profil mis à jour avec succès");
       } else {
         console.error(
