@@ -26,7 +26,6 @@ export default function CreateTask() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    
     const fetchUsers = async () => {
       try {
         const data = await userService.getAllUsers();
@@ -36,7 +35,6 @@ export default function CreateTask() {
       }
     };
 
-    
     const fetchConstructions = async () => {
       try {
         const data = await constructionService.getAll();

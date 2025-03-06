@@ -4,95 +4,95 @@ import Badge from "../../components/badge/Badge";
 import TimelineChart from "../../components/timelineChart/TimelineChart";
 
 interface Task {
-	id: number;
-	title: string;
-	description: string;
-	dateStart: string;
-	dateEnd: string;
-	status: "done" | "pending" | "upcoming";
+  id: number;
+  title: string;
+  description: string;
+  dateStart: string;
+  dateEnd: string;
+  status: "done" | "pending" | "upcoming";
 }
 // Chantier BTP ouvrier
 const tasks: Task[] = [
-	{
-		id: 1,
-		title: "Installer les échafaudages",
-		description: "Installer les échafaudages pour la construction de la maison",
-		dateStart: "2025-10-10T08:00:00.000Z",
-		dateEnd: "2025-10-15T17:00:00.000Z",
-		status: "upcoming"
-	},
-	{
-		id: 2,
-		title: "Coulage de la dalle",
-		description: "Coulage de la dalle de la maison",
-		dateStart: "2025-10-16T08:00:00.000Z",
-		dateEnd: "2025-10-20T17:00:00.000Z",
-		status: "pending"
-	},
-	{
-		id: 3,
-		title: "Pose des murs",
-		description: "Pose des murs de la maison",
-		dateStart: "2025-10-21T08:00:00.000Z",
-		dateEnd: "2025-10-25T17:00:00.000Z",
-		status: "done"
-	},
-	{
-		id: 4,
-		title: "Pose des fenêtres",
-		description: "Pose des fenêtres de la maison",
-		dateStart: "2025-10-26T08:00:00.000Z",
-		dateEnd: "2025-10-30T17:00:00.000Z",
-		status: "done"
-	},
-	{
-		id: 5,
-		title: "Pose des tuiles",
-		description: "Pose des tuiles de la maison",
-		dateStart: "2025-11-01T08:00:00.000Z",
-		dateEnd: "2025-11-05T17:00:00.000Z",
-		status: "pending"
-	},
-	{
-		id: 6,
-		title: "Pose des portes",
-		description: "Pose des portes de la maison",
-		dateStart: "2025-11-06T08:00:00.000Z",
-		dateEnd: "2025-11-10T17:00:00.000Z",
-		status: "pending"
-	},
-	{
-		id: 7,
-		title: "Finitions",
-		description: "Finitions de la maison",
-		dateStart: "2025-11-11T08:00:00.000Z",
-		dateEnd: "2025-11-15T17:00:00.000Z",
-		status: "pending"
-	},
-	{
-		id: 8,
-		title: "Nettoyage",
-		description: "Nettoyage du chantier",
-		dateStart: "2025-11-16T08:00:00.000Z",
-		dateEnd: "2025-11-20T17:00:00.000Z",
-		status: "pending"
-	},
-	{
-		id: 9,
-		title: "Livraison",
-		description: "Livraison de la maison",
-		dateStart: "2025-11-21T08:00:00.000Z",
-		dateEnd: "2025-11-25T17:00:00.000Z",
-		status: "pending"
-	},
-	{
-		id: 10,
-		title: "Fin",
-		description: "Fin du chantier",
-		dateStart: "2025-11-26T08:00:00.000Z",
-		dateEnd: "2025-11-30T17:00:00.000Z",
-		status: "pending"
-	}
+  {
+    id: 1,
+    title: "Installer les échafaudages",
+    description: "Installer les échafaudages pour la construction de la maison",
+    dateStart: "2025-10-10T08:00:00.000Z",
+    dateEnd: "2025-10-15T17:00:00.000Z",
+    status: "upcoming",
+  },
+  {
+    id: 2,
+    title: "Coulage de la dalle",
+    description: "Coulage de la dalle de la maison",
+    dateStart: "2025-10-16T08:00:00.000Z",
+    dateEnd: "2025-10-20T17:00:00.000Z",
+    status: "pending",
+  },
+  {
+    id: 3,
+    title: "Pose des murs",
+    description: "Pose des murs de la maison",
+    dateStart: "2025-10-21T08:00:00.000Z",
+    dateEnd: "2025-10-25T17:00:00.000Z",
+    status: "done",
+  },
+  {
+    id: 4,
+    title: "Pose des fenêtres",
+    description: "Pose des fenêtres de la maison",
+    dateStart: "2025-10-26T08:00:00.000Z",
+    dateEnd: "2025-10-30T17:00:00.000Z",
+    status: "done",
+  },
+  {
+    id: 5,
+    title: "Pose des tuiles",
+    description: "Pose des tuiles de la maison",
+    dateStart: "2025-11-01T08:00:00.000Z",
+    dateEnd: "2025-11-05T17:00:00.000Z",
+    status: "pending",
+  },
+  {
+    id: 6,
+    title: "Pose des portes",
+    description: "Pose des portes de la maison",
+    dateStart: "2025-11-06T08:00:00.000Z",
+    dateEnd: "2025-11-10T17:00:00.000Z",
+    status: "pending",
+  },
+  {
+    id: 7,
+    title: "Finitions",
+    description: "Finitions de la maison",
+    dateStart: "2025-11-11T08:00:00.000Z",
+    dateEnd: "2025-11-15T17:00:00.000Z",
+    status: "pending",
+  },
+  {
+    id: 8,
+    title: "Nettoyage",
+    description: "Nettoyage du chantier",
+    dateStart: "2025-11-16T08:00:00.000Z",
+    dateEnd: "2025-11-20T17:00:00.000Z",
+    status: "pending",
+  },
+  {
+    id: 9,
+    title: "Livraison",
+    description: "Livraison de la maison",
+    dateStart: "2025-11-21T08:00:00.000Z",
+    dateEnd: "2025-11-25T17:00:00.000Z",
+    status: "pending",
+  },
+  {
+    id: 10,
+    title: "Fin",
+    description: "Fin du chantier",
+    dateStart: "2025-11-26T08:00:00.000Z",
+    dateEnd: "2025-11-30T17:00:00.000Z",
+    status: "pending",
+  },
 ];
 
 export default function Home() {
@@ -116,7 +116,7 @@ export default function Home() {
       </div>
       <div className="grid grid-cols-[7fr_3fr] gap-4">
         <div className="h-full w-full">
-          <LineChart />
+          <TimelineChart tasks={tasks} />
         </div>
         <div>
           <h2 className="text-xl font-semibold text-slate-950 mb-2">
