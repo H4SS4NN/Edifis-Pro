@@ -24,13 +24,17 @@ export default function Profile() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
-      setPreviewImage(URL.createObjectURL(e.target.files[0])); // Affiche l'aperçu immédiatement
+      setPreviewImage(URL.createObjectURL(e.target.files[0]));
     }
   };
   const handleSave = async () => {
     try {
-      await updateUser(updatedUser); // Attendre que la mise à jour soit terminée
-      setIsEditing(false); // Désactiver le mode édition après mise à jour
+      const userToUpdate = {
+        ...updatedUser,
+        profile_picture: user.profile_picture,
+      };
+      await updateUser(userToUpdate);
+      setIsEditing(false);
     } catch (error) {
       console.error("Erreur lors de la mise à jour du profil :", error);
     }
@@ -46,9 +50,15 @@ export default function Profile() {
       if (response.profile_picture) {
         const newProfilePic = `http://localhost:5000/uploads/profile_pictures/${response.profile_picture}`;
 
-        // Met à jour l'affichage et le contexte utilisateur
         setPreviewImage(newProfilePic);
+
+        // Mettre à jour `user` et `updatedUser` pour éviter la perte de la photo après édition
         updateUser({ ...user, profile_picture: response.profile_picture });
+        setUpdatedUser((prev) => ({
+          ...prev,
+          profile_picture: response.profile_picture,
+        }));
+
         setIsEditing(false);
       }
     } catch (error) {
@@ -59,7 +69,6 @@ export default function Profile() {
   return (
     <main className="min-h-[calc(100dvh-65px)] md:p-8 p-4">
       <div className="relative flex gap-8">
-        {/* Image de profil */}
         <div className="flex h-48 w-48 overflow-hidden rounded-xl">
           <img
             className="object-cover h-full w-full"
