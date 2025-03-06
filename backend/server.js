@@ -17,7 +17,7 @@ app.use(morgan("dev"));
 
 // Configuration CORS (uniquement une fois)
 app.use(cors({
-  origin: "*", // Changez par l'URL de votre frontend si nécessaire
+  origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));

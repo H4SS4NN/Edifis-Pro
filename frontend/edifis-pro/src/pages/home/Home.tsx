@@ -105,7 +105,7 @@ export default function Home() {
         </h1>
         <h2 className="text-2xl font-semibold text-slate-950">
           {user.role === "Admin"
-            ? "Administrateur"
+            ? "Responsable"
             : user.role === "Manager"
             ? "Chef de projet"
             : "Ouvrier"}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import taskService, { Task } from "../../,,/../../services/taskService";
-import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
+import taskService, { Task } from "../../../services/taskService";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Missions() {
   const { user } = useAuth();
@@ -22,7 +22,7 @@ export default function Missions() {
         }
 
         setTasks(data);
-        setFilteredTasks(data); // Initialisation du tableau filtré
+        setFilteredTasks(data);
       } catch (err) {
         setError("Erreur lors du chargement des missions.");
         console.error(err);
@@ -43,11 +43,9 @@ export default function Missions() {
     setFilteredTasks(results);
   }, [search, tasks]);
 
-  if (loading)
-    return <p className="text-center text-gray-500">Chargement...</p>;
+  if (loading) return <p className="text-center text-gray-500">Chargement...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
-  if (tasks.length === 0)
-    return <p className="text-center text-gray-500">Aucune mission trouvée.</p>;
+  if (tasks.length === 0) return <p className="text-center text-gray-500">Aucune mission trouvée.</p>;
 
   return (
     <main className="min-h-screen p-8 bg-gray-100">
@@ -73,18 +71,14 @@ export default function Missions() {
 
       <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-6">
         {filteredTasks.length === 0 ? (
-          <p className="text-center text-gray-500">
-            Aucune mission correspondante.
-          </p>
+          <p className="text-center text-gray-500">Aucune mission correspondante.</p>
         ) : (
           filteredTasks.map((task) => (
             <div
               key={task.task_id}
-              className="bg-white border border-gray-200 rounded-lg shadow-lg p-5"
+              className="bg-white border border-gray-200 rounded-lg shadow-lg p-5 relative"
             >
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-                {task.name}
-              </h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">{task.name}</h2>
               <p className="text-gray-700">{task.description}</p>
               <p className="text-sm text-gray-600 mt-2">
                 <strong>📅 Début :</strong> {task.start_date || "Non défini"}
@@ -116,13 +110,21 @@ export default function Missions() {
                 ) : (
                   <ul className="text-gray-800">
                     {task.users.map((user) => (
-                      <li key={user.user_id}>
-                        - {user.firstname} {user.lastname}
-                      </li>
+                      <li key={user.user_id}>- {user.firstname} {user.lastname}</li>
                     ))}
                   </ul>
                 )}
               </div>
+
+              {/* Bouton Modifier */}
+              {(user.role === "Admin" || user.role === "Manager") && (
+                <Link
+                  to={`/editmission/${task.task_id}`}
+                  className="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600"
+                >
+                  Modifier
+                </Link>
+              )}
             </div>
           ))
         )}
