@@ -147,12 +147,12 @@ exports.login = async (req, res) => {
 
         const user = await User.findOne({ where: { email } });
         if (!user) {
-            return res.status(401).json({ message: "Utilisateur non trouvé" });
+            return res.status(401).json({ message: "Email ou Mot de passe incorrect" });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(401).json({ message: "Mot de passe incorrect" });
+            return res.status(401).json({ message: "Email ou Mot de passe incorrect" });
         }
 
         // Générer un token JWT
@@ -307,3 +307,6 @@ exports.deleteUser = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+console.log(process.env.JWT_SECRET);
+console.log(process.env.JWT_EXPIRES_IN);

@@ -1,25 +1,30 @@
-import { Check, Loader2, CalendarClock } from "lucide-react";
+import { CalendarClock, Loader2, Ban, Check  } from "lucide-react";
 
 interface BadgeProps {
-    status: "done" | "pending" | "upcoming";
+    status: "Prévu" | "En cours" | "Annulé" | "Terminée";
 }
 
 export default function Badge({ status }: BadgeProps) {
     const statusConfig = {
-        done: {
-            text: "Terminée",
-            icon: <Check size={12} />,
-            colorClass: "text-green-900 bg-green-100",
+        "Prévu": {
+            text: "À venir",
+            icon: <CalendarClock size={12} />,
+            colorClass: "text-blue-900 bg-blue-100",
         },
-        pending: {
+        "En cours": {
             text: "En cours",
             icon: <Loader2 size={12} className="animate-spin" />,
             colorClass: "text-yellow-900 bg-yellow-100",
         },
-        upcoming: {
-            text: "À venir",
-            icon: <CalendarClock size={12} />,
-            colorClass: "text-blue-900 bg-blue-100",
+        "Annulé": {
+            text: "Annulée",
+            icon: <Ban size={12} />,
+            colorClass: "text-red-900 bg-red-100",
+        },
+        "Terminée": {
+            text: "Terminée",
+            icon: <Check size={12} />,
+            colorClass: "text-green-900 bg-green-100",
         },
     };
 
