@@ -199,31 +199,29 @@ exports.getAllUsers = async (req, res) => {
 exports.getAllWorkers = async (req, res) => {
     try {
         console.log(req.user.role);
-        res.json({ message: "Récupération des travailleurs" });
-        // Vérifier que l'utilisateur est soit Admin soit Manager
-        //     if (req.user.role !== "Admin" && req.user.role !== "Manager") {
-        //         return res.status(403).json({ message: "Accès refusé. Seuls les Admins et Managers peuvent accéder à cette ressource" });
-        //     }
+        if (req.user.role !== "Admin" && req.user.role !== "Manager") {
+            return res.status(403).json({ message: "Accès refusé. Seuls les Admins et Managers peuvent accéder à cette ressource" });
+        }
 
-        //     const users = await User.findAll({
-        //         attributes: ["user_id", "firstname", "lastname", "email", "numberphone", "profile_picture", "role"],
-        //         where: {
-        //             role: { [Op.notIn]: ["Admin", "Manager"] } // Exclure les Admins et Managers
-        //         },
-        //         include: [
-        //             {
-        //                 model: Competence,
-        //                 attributes: ["name"],
-        //                 through: { attributes: [] }
-        //             }
-        //         ]
-        //     });
+        const users = await User.findAll({
+            attributes: ["user_id", "firstname", "lastname", "email", "numberphone", "profile_picture", "role"],
+            where: {
+                role: { [Op.notIn]: ["Admin", "Manager"] } // Exclure les Admins et Managers
+            },
+            include: [
+                {
+                    model: Competence,
+                    attributes: ["name"],
+                    through: { attributes: [] }
+                }
+            ]
+        });
 
-        //     if (!users.length) {
-        //         return res.status(404).json({ message: "Aucun utilisateur trouvé (hors Admins)" });
-        //     }
+        if (!users.length) {
+            return res.status(404).json({ message: "Aucun utilisateur trouvé (hors Admins)" });
+        }
 
-        //     res.json(users);
+        res.json(users);
     } catch (error) {
         console.error("Erreur lors de la récupération des utilisateurs :", error);
         res.status(500).json({ error: error.message });
