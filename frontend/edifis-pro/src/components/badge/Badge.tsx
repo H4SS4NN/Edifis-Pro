@@ -1,4 +1,4 @@
-import { CalendarClock, Loader2, Ban, Check  } from "lucide-react";
+import { CalendarClock, Loader2, Check, Ban  } from "lucide-react";
 
 interface BadgeProps {
     status: "Prévu" | "En cours" | "Annulé" | "Terminé";

@@ -11,7 +11,7 @@ export default function CreateTask() {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("En attente");
+  const [status, setStatus] = useState("Prévu");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
@@ -21,9 +21,12 @@ export default function CreateTask() {
 
   const [users, setUsers] = useState([]);
   const [constructions, setConstructions] = useState([]);
-
+  const [minStartDate, setMinStartDate] = useState<string>("");
+  const [maxEndDate, setMaxEndDate] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [userFilter, setUserFilter] = useState("");
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -36,7 +39,6 @@ export default function CreateTask() {
           setError("Vous n'avez pas accès à cette ressource.");
           return;
         }
-
         setUsers(data);
       } catch (err) {
         setError("Erreur lors du chargement des utilisateurs.");
@@ -56,25 +58,80 @@ export default function CreateTask() {
     fetchConstructions();
   }, [user]);
 
+  // Fonction pour s'assurer que les dates respectent le format "YYYY-MM-DDTHH:MM"
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return "";
+    return `${dateString}T00:00`;
+  };
+
+  const handleConstructionChange = (e) => {
+    const selectedId = Number(e.target.value);
+    setSelectedConstruction(selectedId);
+    const selectedConstructionData = constructions.find(
+      (c) => c.construction_site_id === selectedId
+    );
+    if (selectedConstructionData) {
+      // Transformation pour que les dates respectent le format requis
+      setMinStartDate(formatDateForInput(selectedConstructionData.start_date));
+      setMaxEndDate(formatDateForInput(selectedConstructionData.end_date));
+      // Réinitialisation des dates de la mission
+      setStartDate(formatDateForInput(selectedConstructionData.start_date));
+      setEndDate(formatDateForInput(selectedConstructionData.end_date));
+    }
+  };
+
+  // Fonction pour vérifier la disponibilité d'un utilisateur
+  const isUserAvailable = (user) => {
+    if (!startDate || !endDate) return true; // Pas de vérification si les dates ne sont pas renseignées
+    const newStart = new Date(startDate);
+    const newEnd = new Date(endDate);
+    // Si l'utilisateur n'a pas de missions, il est disponible
+    if (!user.Tasks || user.Tasks.length === 0) return true;
+    // Vérifier qu'aucune mission ne chevauche la nouvelle plage de dates
+    return user.Tasks.every((task) => {
+      const taskStart = new Date(task.start_date);
+      const taskEnd = new Date(task.end_date);
+      // Condition sans chevauchement : la nouvelle fin est avant le début de la mission ou le nouveau début est après la fin de la mission
+      return newEnd <= taskStart || newStart >= taskEnd;
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    try {
-      if (!selectedConstruction) {
-        setError("Veuillez sélectionner un chantier.");
-        setLoading(false);
-        return;
-      }
+    if (!selectedConstruction) {
+      setError("Veuillez sélectionner un chantier.");
+      setLoading(false);
+      return;
+    }
 
+    // Vérification des dates
+    if (startDate < minStartDate) {
+      setError(`La date de début ne peut pas être avant ${minStartDate}`);
+      setLoading(false);
+      return;
+    }
+    if (endDate > maxEndDate) {
+      setError(`La date de fin ne peut pas être après ${maxEndDate}`);
+      setLoading(false);
+      return;
+    }
+    if (startDate > endDate) {
+      setError("La date de début doit être avant la date de fin.");
+      setLoading(false);
+      return;
+    }
+
+    try {
       const newTask = await taskService.create({
         name,
         description,
         status,
         start_date: startDate,
         end_date: endDate,
-        construction_site_id: selectedConstruction, // Ajout du chantier
+        construction_site_id: selectedConstruction,
       });
 
       if (selectedUsers.length > 0) {
@@ -99,6 +156,7 @@ export default function CreateTask() {
         onSubmit={handleSubmit}
         className="bg-white p-6 shadow-lg rounded-lg"
       >
+        {/* Informations de base */}
         <div className="mb-4">
           <label className="block text-gray-700">Nom de la mission :</label>
           <input
@@ -109,7 +167,6 @@ export default function CreateTask() {
             className="w-full p-2 border border-gray-300 rounded-lg"
           />
         </div>
-
         <div className="mb-4">
           <label className="block text-gray-700">Description :</label>
           <textarea
@@ -119,7 +176,6 @@ export default function CreateTask() {
             className="w-full p-2 border border-gray-300 rounded-lg"
           ></textarea>
         </div>
-
         <div className="mb-4">
           <label className="block text-gray-700">Statut :</label>
           <select
@@ -134,12 +190,12 @@ export default function CreateTask() {
           </select>
         </div>
 
-        {/* 📌 Sélection du chantier */}
+        {/* Sélection du chantier */}
         <div className="mb-4">
           <label className="block text-gray-700">Chantier :</label>
           <select
             value={selectedConstruction || ""}
-            onChange={(e) => setSelectedConstruction(Number(e.target.value))}
+            onChange={handleConstructionChange}
             className="w-full p-2 border border-gray-300 rounded-lg"
             required
           >
@@ -155,6 +211,7 @@ export default function CreateTask() {
           </select>
         </div>
 
+        {/* Dates de la mission */}
         <div className="mb-4">
           <label className="block text-gray-700">
             Date et heure de début :
@@ -164,10 +221,11 @@ export default function CreateTask() {
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             required
+            min={minStartDate}
+            max={maxEndDate}
             className="w-full p-2 border border-gray-300 rounded-lg"
           />
         </div>
-
         <div className="mb-4">
           <label className="block text-gray-700">Date et heure de fin :</label>
           <input
@@ -175,10 +233,27 @@ export default function CreateTask() {
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             required
+            min={startDate}
+            max={maxEndDate}
             className="w-full p-2 border border-gray-300 rounded-lg"
           />
         </div>
 
+        {/* Champ de recherche pour les utilisateurs */}
+        <div className="mb-4">
+          <label className="block text-gray-700">
+            Rechercher un utilisateur :
+          </label>
+          <input
+            type="text"
+            value={userFilter}
+            onChange={(e) => setUserFilter(e.target.value)}
+            placeholder="Tapez le nom ou la compétence..."
+            className="w-full p-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+
+        {/* Sélection des utilisateurs */}
         <div className="mb-4">
           <label className="block text-gray-700">
             Assigner des utilisateurs :
@@ -193,14 +268,36 @@ export default function CreateTask() {
             }
             className="w-full p-2 border border-gray-300 rounded-lg"
           >
-            {users.map((user) => (
-              <option key={user.user_id} value={user.user_id}>
-                {user.firstname} {user.lastname}
-                {user.competences && user.competences.length > 0 && (
-                  <> - {user.competences.map(c => c.name).join(", ")}</>
-                )}
-              </option>
-            ))}
+            {users
+              .filter((user) => {
+                // Filtrage basé sur le nom et les compétences
+                const fullName =
+                  `${user.firstname} ${user.lastname}`.toLowerCase();
+                const filterText = userFilter.toLowerCase();
+                const competenceText = user.competences
+                  ? user.competences.map((c) => c.name.toLowerCase()).join(" ")
+                  : "";
+                return (
+                  fullName.includes(filterText) ||
+                  competenceText.includes(filterText)
+                );
+              })
+              .map((user) => {
+                const available = isUserAvailable(user);
+                return (
+                  <option
+                    key={user.user_id}
+                    value={user.user_id}
+                    disabled={!available}
+                  >
+                    {user.firstname} {user.lastname}{" "}
+                    {!available && " (Non disponible)"}
+                    {user.competences && user.competences.length > 0 && (
+                      <> - {user.competences.map((c) => c.name).join(", ")}</>
+                    )}
+                  </option>
+                );
+              })}
           </select>
         </div>
 

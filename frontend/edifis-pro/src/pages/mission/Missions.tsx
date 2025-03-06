@@ -16,6 +16,7 @@ export default function Missions() {
     const fetchTasks = async () => {
       try {
         let data;
+        console.log(user);
         if (user.role === "Admin") {
           data = await taskService.getAll();
         } else {
@@ -44,10 +45,9 @@ export default function Missions() {
     setFilteredTasks(results);
   }, [search, tasks]);
 
-  if (loading) return <p className="text-center text-gray-500">Chargement...</p>;
+  if (loading)
+    return <p className="text-center text-gray-500">Chargement...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
-  if (tasks.length === 0) return <p className="text-center text-gray-500">Aucune mission trouvée.</p>;
-
   return (
     <main className="min-h-screen p-8 bg-gray-100">
       <div className="flex justify-between items-center mb-6">
@@ -62,6 +62,10 @@ export default function Missions() {
         )}
       </div>
 
+      {tasks.length === 0 && (
+        <p className="text-center text-gray-500">Aucune mission trouvée.</p>
+      )}
+
       <input
         type="text"
         placeholder="Rechercher une mission..."
@@ -72,7 +76,9 @@ export default function Missions() {
 
       <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-6">
         {filteredTasks.length === 0 ? (
-          <p className="text-center text-gray-500">Aucune mission correspondante.</p>
+          <p className="text-center text-gray-500">
+            Aucune mission correspondante.
+          </p>
         ) : (
           filteredTasks.map((task) => (
             <div
@@ -103,26 +109,74 @@ export default function Missions() {
                   <p className="text-gray-600">Aucun assigné</p>
                 ) : task.users.length === 1 ? (
                   <p className="text-gray-800">
-                    {task.users[0].firstname} {task.users[0].lastname}
+                    {task.users[0].firstname} {task.users[0].lastname}{" "}
                   </p>
                 ) : (
                   <ul className="text-gray-800">
                     {task.users.map((user) => (
-                      <li key={user.user_id}>- {user.firstname} {user.lastname}</li>
+                      <li key={user.user_id}>
+                        - {user.firstname} {user.lastname}
+                      </li>
                     ))}
                   </ul>
                 )}
               </div>
-
+              <div className="mb-4">
+                <h1 className="text-xl font-semibold text-gray-900">
+                  <strong>Chantier :</strong> {task.construction_site.name}
+                </h1>
+                <p className="text-gray-700">
+                  <strong>📅 Début du chantier :</strong>{" "}
+                  {task.construction_site.start_date
+                    ? new Date(
+                        task.construction_site.start_date
+                      ).toLocaleDateString()
+                    : "Non défini"}
+                </p>
+                <p className="text-gray-700">
+                  <strong>📅 Fin du chantier :</strong>{" "}
+                  {task.construction_site.end_date
+                    ? new Date(
+                        task.construction_site.end_date
+                      ).toLocaleDateString()
+                    : "Non défini"}
+                </p>
+                <p className="text-gray-700">
+                  <strong>📍 Adresse :</strong> {task.construction_site.adresse}
+                </p>
+              </div>
               {/* Bouton Modifier */}
-              {(user.role === "Admin" || user.role === "Manager") && (
-                <Link
-                  to={`/editmission/${task.task_id}`}
-                  className="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600"
-                >
-                  Modifier
-                </Link>
-              )}
+              {(user.role === "Admin" || user.role === "Manager") &&
+                !task.users.some((u) => u.user_id === user.user_id) && (
+                  <Link
+                    to={`/editmission/${task.task_id}`}
+                    className="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600"
+                  >
+                    Modifier
+                  </Link>
+                )}
+              {(user.role === "Admin" || user.role === "Manager") &&
+                !task.users.some((u) => u.user_id === user.user_id) && (
+                  <button
+                    onClick={async () => {
+                      if (
+                        window.confirm("Êtes-vous sûr de vouloir supprimer ?")
+                      ) {
+                        try {
+                          await taskService.delete(task.task_id);
+                          setTasks((prev) =>
+                            prev.filter((t) => t.task_id !== task.task_id)
+                          );
+                        } catch (err) {
+                          console.error(err);
+                        }
+                      }
+                    }}
+                    className="mt-4 inline-block bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600"
+                  >
+                    Supprimer
+                  </button>
+                )}
             </div>
           ))
         )}

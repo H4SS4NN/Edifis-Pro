@@ -13,7 +13,7 @@ const Timesheet = sequelize.define("timesheet", {
   },
   end_date: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true, 
   },
 });
 
