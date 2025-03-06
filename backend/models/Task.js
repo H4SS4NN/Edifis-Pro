@@ -15,7 +15,7 @@ const Task = sequelize.define("Task", {
     type: DataTypes.TEXT,
   },
   status: {
-    type: DataTypes.ENUM("En attente", "En cours", "Terminée"),
+    type: DataTypes.ENUM('En cours', 'Terminé', 'Annulé', 'Prévu'),
     allowNull: false,
   },
   creation_date: {
