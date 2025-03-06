@@ -147,6 +147,28 @@ export default function CreateTask() {
         </div>
 
         <div className="mb-4">
+          <label className="block text-gray-700">Date de début :</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            required
+            className="w-full p-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-700">Date de fin :</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            required
+            className="w-full p-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+
+        <div className="mb-4">
           <label className="block text-gray-700">
             Assigner des utilisateurs :
           </label>
