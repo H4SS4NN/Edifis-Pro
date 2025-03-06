@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import taskService, { Task } from "../../../services/taskService";
 import { useAuth } from "../../context/AuthContext";
+import Badge from "../../components/badge/Badge";
 
 export default function Missions() {
   const { user } = useAuth();
@@ -78,7 +79,10 @@ export default function Missions() {
               key={task.task_id}
               className="bg-white border border-gray-200 rounded-lg shadow-lg p-5 relative"
             >
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">{task.name}</h2>
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-2">{task.name}</h2>
+                {task.status && <Badge status={task.status} />}
+              </div>
               <p className="text-gray-700">{task.description}</p>
               <p className="text-sm text-gray-600 mt-2"></p>
               <p className="text-sm text-gray-600">
@@ -92,17 +96,6 @@ export default function Missions() {
               {task.end_date
                 ? new Date(task.end_date).toLocaleString()
                 : "Non défini"}
-              <p
-                className={`text-sm font-bold mt-2 ${
-                  task.status === "En cours"
-                    ? "text-yellow-600"
-                    : task.status === "Terminé"
-                    ? "text-green-600"
-                    : "text-red-600"
-                }`}
-              >
-                <strong>Statut :</strong> {task.status}
-              </p>
               {/* Affichage des utilisateurs assignés */}
               <div className="mt-4">
                 <strong className="text-gray-800">👥 Assigné à :</strong>
