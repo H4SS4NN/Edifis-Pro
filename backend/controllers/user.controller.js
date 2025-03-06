@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const fs = require("fs");
+const Task = require("../models/Task");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 const Role = require("../models/Role");
 const Competence = require("../models/Competence");
@@ -181,6 +182,11 @@ exports.getAllUsers = async (req, res) => {
                     model: Competence,
                     attributes: ["name"],
                     through: { attributes: [] }
+                },
+                {
+                    model: Task,
+                    attributes: ["task_id", "description", "start_date", "end_date"],
+                    through: { attributes: [] }
                 }
             ]
         });
@@ -212,6 +218,11 @@ exports.getAllWorkers = async (req, res) => {
                 {
                     model: Competence,
                     attributes: ["name"],
+                    through: { attributes: [] }
+                },
+                {
+                    model: Task,
+                    attributes: ["task_id", "description", "start_date", "end_date"],
                     through: { attributes: [] }
                 }
             ]
