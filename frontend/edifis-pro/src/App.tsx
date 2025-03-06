@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
+import "./App.css";
 
 import ProtectedRoute from "./components/protectedRoute/ProtectedRoute";
 import PageLayout from "./layout/PageLayout";
@@ -17,36 +18,36 @@ import Missions from "./pages/mission/Missions";
 import CreateTask from "./pages/mission/addtask";
 
 function App() {
-  const { isAuthenticated, user } = useAuth();
+    const { isAuthenticated } = useAuth();
 
-  return (
-    <Routes>
-      <Route element={<ProtectedRoute />}>
-        <Route element={<PageLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
+    return (
+        <Routes>
+            <Route element={<ProtectedRoute />}>
+                <Route element={<PageLayout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/profile" element={<Profile />} />
           <Route path="/missions" element={<Missions />} />
           <Route path="/addamission" element={<CreateTask />} />
-          <Route path="/construction" element={<Construction />} />
-          <Route
-            path="/ConstructionDetails/:id"
-            element={<ConstructionDetails />}
-          />
+                    <Route path="/construction" element={<Construction />} />
+                    <Route
+                        path="/ConstructionDetails/:id"
+                        element={<ConstructionDetails />}
+                    />
 
-          <Route path="/AddConstruction" element={<AddConstruction />} />
-          {/* Routes accessibles uniquement aux admins */}
-          <Route element={<ProtectedRoute requiredRole="Admin" />}>
-            <Route path="/worker" element={<Worker />} />
-            <Route path="/AddWorker" element={<AddWorker />} />
-            <Route path="/worker/:id" element={<WorkerDetails />} />
-          </Route>
-        </Route>
-      </Route>
+                    <Route path="/AddConstruction" element={<AddConstruction />} />
+                    {/* Routes accessibles uniquement aux admins */}
+                    <Route element={<ProtectedRoute requiredRole="Admin" />}>
+                        <Route path="/worker" element={<Worker />} />
+                        <Route path="/AddWorker" element={<AddWorker />} />
+                        <Route path="/worker/:id" element={<WorkerDetails />} />
+                    </Route>
+                </Route>
+            </Route>
 
-      {!isAuthenticated && <Route path="/login" element={<Login />} />}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  );
+            {!isAuthenticated && <Route path="/login" element={<Login />} />}
+            <Route path="*" element={<NotFound />} />
+        </Routes>
+    );
 }
 
 export default App;

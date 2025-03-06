@@ -46,7 +46,7 @@ export default function Login() {
     };
 
     return (
-        <main className="h-dvh md:p-6 w-full">
+        <main className="h-dvh md:p-8 w-full">
             <div className="relative grid h-full flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
                 <div className="relative h-full flex-col lg:flex hidden p-8 rounded-xl overflow-hidden">
                     <Link to='/' className="relative flex items-center text-sm text-white sm:text-lg font-medium uppercase z-10">

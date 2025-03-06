@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import userService, { User } from "../../../services/userService";
 
+import Loading from "../../components/loading/Loading";
+
 // URL d'image par défaut pour les ouvriers
 const DEFAULT_IMAGE = "https://www.capcampus.com/img/u/1/job-etudiant-batiment.jpg";
 
@@ -37,12 +39,14 @@ export default function Workers() {
 
     if (loading)
         return (
-            <p className="text-center text-gray-500">Chargement des employés...</p>
+            <div className="flex items-center justify-center min-h-[calc(100dvh-65px)] w-full p-8">
+                <Loading />
+            </div>
         );
     if (error) return <p className="text-center text-red-500">{error}</p>;
 
     return (
-        <main className="min-h-screen p-8 bg-gray-100">
+        <main className="min-h-[calc(100dvh-65px)] p-8 bg-gray-100">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-4xl font-bold text-gray-900">Employés</h1>
                 <Link
@@ -86,8 +90,8 @@ export default function Workers() {
                                 : "Compétences non renseignées"}
                         </p>
 
-                        <p className="text-sm text-gray-500">{worker.numberphone}</p>
-                        <p className="text-sm text-gray-500">{worker.email}</p>
+                        <p className="text-sm text-slate-500">{worker.numberphone}</p>
+                        <p className="text-sm text-slate-500">{worker.email}</p>
                         <span
                             className={`mt-2 px-3 py-1 rounded-md text-sm ${worker.role === "Worker"
                                 ? "bg-blue-200 text-blue-800"
