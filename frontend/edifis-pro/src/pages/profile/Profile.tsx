@@ -76,14 +76,14 @@ export default function Profile() {
                 <div className="w-full">
                     <div className="flex justify-between flex-wrap mb-5">
                         <div>
-                            <h1 className="text-3xl font-medium">
+                            <h1 className="text-3xl font-medium space-y-2">
                                 {isEditing ? (
                                     <input
                                         type="text"
                                         name="firstname"
                                         value={updatedUser.firstname}
                                         onChange={handleChange}
-                                        className="border border-gray-300 rounded p-1"
+                                        className="flex w-full rounded-md border border-slate-200 bg-transparent px-3 py-1 text-zinc-950 transition-colors placeholder:text-black/60 focus-visible:outline-none focus-visible:ring focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
                                     />
                                 ) : (
                                     user.firstname
@@ -94,7 +94,7 @@ export default function Profile() {
                                         name="lastname"
                                         value={updatedUser.lastname}
                                         onChange={handleChange}
-                                        className="border border-gray-300 rounded p-1"
+                                        className="flex w-full rounded-md border border-slate-200 bg-transparent px-3 py-1 text-zinc-950 transition-colors placeholder:text-black/60 focus-visible:outline-none focus-visible:ring focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
                                     />
                                 ) : (
                                     user.lastname
