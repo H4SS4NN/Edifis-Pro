@@ -2,33 +2,36 @@ import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import taskService, { Task } from "../../../services/taskService";
 import userService, { User } from "../../../services/userService";
-import constructionService, { ConstructionSite } from "../../../services/constructionSiteService";
 
-// Petite fonction utilitaire pour transformer une date ISO en format "YYYY-MM-DDTHH:MM"
-function toDateTimeLocal(isoString?: string): string {
-  if (!isoString) return "";
-  const date = new Date(isoString);
-  // .slice(0,16) pour avoir "YYYY-MM-DDTHH:MM"
-  return date.toISOString().slice(0, 16);
-}
+import constructionService, {
+  ConstructionSite,
+} from "../../../services/constructionSiteService";
+import { useAuth } from "../../context/AuthContext";
 
 export default function EditTask() {
+  // L'ID provient des paramètres de l'URL et sera converti en nombre
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
+  // États
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [status, setStatus] = useState<string>("En attente");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
+  // Utilisation de number[] pour les IDs des utilisateurs assignés
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
-  const [selectedConstruction, setSelectedConstruction] = useState<number | null>(null);
+  // Pour le chantier, on utilise number | null (null si aucun chantier n'est sélectionné)
+  const [selectedConstruction, setSelectedConstruction] = useState<
+    number | null
+  >(null);
 
   const [users, setUsers] = useState<User[]>([]);
   const [constructions, setConstructions] = useState<ConstructionSite[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-
+  const user = useAuth().user;
+  console.log(user.role);
   useEffect(() => {
     const fetchTask = async () => {
       try {
@@ -36,13 +39,12 @@ export default function EditTask() {
         setName(task.name || "");
         setDescription(task.description || "");
         setStatus(task.status || "En attente");
-        
-        // Conversion de la date ISO (ex: "2025-03-19T16:18:15.000Z") vers "YYYY-MM-DDTHH:MM"
-        setStartDate(toDateTimeLocal(task.start_date));
-        setEndDate(toDateTimeLocal(task.end_date));
-
+        // Transformation des dates pour le format attendu par l'input date
+        setStartDate(task.start_date ? task.start_date.split("T")[0] : "");
+        setEndDate(task.end_date ? task.end_date.split("T")[0] : "");
         setSelectedConstruction(task.construction_site_id || null);
-        setSelectedUsers(task.users.map((u) => u.user_id));
+        // On suppose que task.users est un tableau d'objets User
+        setSelectedUsers(task.users.map((user: User) => user.user_id));
       } catch {
         setError("Erreur lors du chargement de la mission.");
       }
@@ -51,7 +53,7 @@ export default function EditTask() {
     const fetchUsersAndConstructions = async () => {
       try {
         const [usersData, constructionsData] = await Promise.all([
-          userService.getAllUsers(),
+          user.role === "Admin" ? userService.getAllUsers() : userService.getAllWorkers(),
           constructionService.getAll(),
         ]);
         setUsers(usersData);
@@ -99,42 +101,48 @@ export default function EditTask() {
   };
 
   const handleUserChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const values = Array.from(e.target.selectedOptions, (opt) => Number(opt.value));
+    const values = Array.from(e.target.selectedOptions, (opt) =>
+      Number(opt.value)
+    );
     setSelectedUsers(values);
   };
 
   return (
     <main className="min-h-screen p-8 bg-gray-100">
-      <h1 className="text-4xl font-bold text-gray-900 mb-6">Modifier la Mission</h1>
+      <h1 className="text-4xl font-bold text-gray-900 mb-6">
+        Modifier la Mission
+      </h1>
       {error && <p className="text-red-500">{error}</p>}
-      
-      <form onSubmit={handleSubmit} className="bg-white p-6 shadow-lg rounded-lg">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 shadow-lg rounded-lg"
+      >
         <div className="mb-4">
           <label className="block text-gray-700">Nom :</label>
-          <input 
-            type="text" 
-            value={name} 
-            onChange={(e) => setName(e.target.value)} 
-            required 
-            className="w-full p-2 border border-gray-300 rounded-lg" 
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700">Description :</label>
-          <textarea 
-            value={description} 
-            onChange={(e) => setDescription(e.target.value)} 
-            required 
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
             className="w-full p-2 border border-gray-300 rounded-lg"
           />
         </div>
 
         <div className="mb-4">
+          <label className="block text-gray-700">Description :</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+            className="w-full p-2 border border-gray-300 rounded-lg"
+          ></textarea>
+        </div>
+
+        <div className="mb-4">
           <label className="block text-gray-700">Statut :</label>
-          <select 
-            value={status} 
-            onChange={(e) => setStatus(e.target.value)} 
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg"
           >
             <option value="En attente">En attente</option>
@@ -153,8 +161,8 @@ export default function EditTask() {
           >
             <option value="">Sélectionnez un chantier</option>
             {constructions.map((construction) => (
-              <option 
-                key={construction.construction_site_id} 
+              <option
+                key={construction.construction_site_id}
                 value={construction.construction_site_id}
               >
                 {construction.name} - {construction.adresse}
@@ -163,9 +171,8 @@ export default function EditTask() {
           </select>
         </div>
 
-        {/* Remplacement de type="date" par type="datetime-local" */}
         <div className="mb-4">
-          <label className="block text-gray-700">Date et heure de début :</label>
+          <label className="block text-gray-700">Date de début :</label>
           <input
             type="datetime-local"
             value={startDate}
@@ -176,7 +183,7 @@ export default function EditTask() {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700">Date et heure de fin :</label>
+          <label className="block text-gray-700">Date de fin :</label>
           <input
             type="datetime-local"
             value={endDate}
@@ -187,9 +194,11 @@ export default function EditTask() {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700">Assigner des utilisateurs :</label>
-          <select 
-            multiple 
+          <label className="block text-gray-700">
+            Assigner des utilisateurs :
+          </label>
+          <select
+            multiple
             value={selectedUsers}
             onChange={handleUserChange}
             className="w-full p-2 border border-gray-300 rounded-lg"
@@ -197,16 +206,13 @@ export default function EditTask() {
             {users.map((user) => (
               <option key={user.user_id} value={user.user_id}>
                 {user.firstname} {user.lastname}
-                {user.competences && user.competences.length > 0 && (
-                  <> - {user.competences.map(c => c.name).join(", ")}</>
-                )}
               </option>
             ))}
           </select>
         </div>
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={loading}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
         >

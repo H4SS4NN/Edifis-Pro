@@ -43,9 +43,11 @@ export default function Missions() {
     setFilteredTasks(results);
   }, [search, tasks]);
 
-  if (loading) return <p className="text-center text-gray-500">Chargement...</p>;
+  if (loading)
+    return <p className="text-center text-gray-500">Chargement...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
-  if (tasks.length === 0) return <p className="text-center text-gray-500">Aucune mission trouvée.</p>;
+  if (tasks.length === 0)
+    return <p className="text-center text-gray-500">Aucune mission trouvée.</p>;
 
   return (
     <main className="min-h-screen p-8 bg-gray-100">
@@ -71,14 +73,18 @@ export default function Missions() {
 
       <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-6">
         {filteredTasks.length === 0 ? (
-          <p className="text-center text-gray-500">Aucune mission correspondante.</p>
+          <p className="text-center text-gray-500">
+            Aucune mission correspondante.
+          </p>
         ) : (
           filteredTasks.map((task) => (
             <div
               key={task.task_id}
               className="bg-white border border-gray-200 rounded-lg shadow-lg p-5 relative"
             >
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">{task.name}</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                {task.name}
+              </h2>
               <p className="text-gray-700">{task.description}</p>
               <p className="text-sm text-gray-600 mt-2"></p>
               <p className="text-sm text-gray-600">
@@ -115,12 +121,13 @@ export default function Missions() {
                 ) : (
                   <ul className="text-gray-800">
                     {task.users.map((user) => (
-                      <li key={user.user_id}>- {user.firstname} {user.lastname}</li>
+                      <li key={user.user_id}>
+                        - {user.firstname} {user.lastname}
+                      </li>
                     ))}
                   </ul>
                 )}
               </div>
-
               {/* Bouton Modifier */}
               {(user.role === "Admin" || user.role === "Manager") && (
                 <Link
@@ -129,6 +136,28 @@ export default function Missions() {
                 >
                   Modifier
                 </Link>
+              )}
+              {/* Bouton Supprimer */}
+              {(user.role === "Admin" || user.role === "Manager") && (
+                <button
+                  onClick={async () => {
+                    if (
+                      window.confirm("Êtes-vous sûr de vouloir supprimer ?")
+                    ) {
+                      try {
+                        await taskService.delete(task.task_id);
+                        setTasks((prev) =>
+                          prev.filter((t) => t.task_id !== task.task_id)
+                        );
+                      } catch (err) {
+                        console.error(err);
+                      }
+                    }
+                  }}
+                  className="mt-4 inline-block bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600"
+                >
+                  Supprimer
+                </button>
               )}
             </div>
           ))
