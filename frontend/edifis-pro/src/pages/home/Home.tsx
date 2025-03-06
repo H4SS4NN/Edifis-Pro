@@ -9,7 +9,7 @@ interface Task {
     description: string;
     dateStart: string;
     dateEnd: string;
-    status: "Prévu" | "En cours" | "Annulé" | "Terminée";
+    status: "Prévu" | "En cours" | "Annulé" | "Terminé";
 }
 
 const tasks: Task[] = [
@@ -27,7 +27,7 @@ const tasks: Task[] = [
         description: "Coulage de la dalle de la maison",
         dateStart: "2025-10-16T08:00:00.000Z",
         dateEnd: "2025-10-16T17:00:00.000Z",
-        status: "Terminée"
+        status: "Terminé"
     },
     {
         id: 3,
