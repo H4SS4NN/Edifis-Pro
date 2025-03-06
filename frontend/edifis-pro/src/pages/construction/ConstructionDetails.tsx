@@ -1,25 +1,27 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import constructionSiteService from "../../../services/constructionSiteService";
 import userService from "../../../services/userService";
 import Loading from "../../components/loading/Loading";
 import Badge from "../../components/badge/Badge";
 
 function sanitizeInput(field: string, value: string): string {
-  if (field === "description") {
-    return value.replace(/[<>]/g, "");
-  }
-  if (field === "name") {
-    return value.replace(/[^a-zA-Z0-9\s\-_]/g, "");
-  }
-  if (field === "adresse") {
-    return value.replace(/[^a-zA-Z0-9\s,\-_]/g, "");
-  }
-  return value;
+    if (field === "description") {
+        return value.replace(/[<>]/g, "");
+    }
+    if (field === "name") {
+        return value.replace(/[^a-zA-Z0-9\s\-_]/g, "");
+    }
+    if (field === "adresse") {
+        return value.replace(/[^a-zA-Z0-9\s,\-_]/g, "");
+    }
+    return value;
 }
 
 export default function ConstructionDetails() {
     const { id } = useParams<{ id: string }>();
+    const { user } = useAuth();
     const [construction, setConstruction] = useState<ConstructionSite | null>(null);
     const [initialConstruction, setInitialConstruction] = useState<ConstructionSite | null>(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -62,17 +64,15 @@ export default function ConstructionDetails() {
         }
     };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[calc(100dvh-65px)] w-full p-8">
-        <Loading />
-      </div>
-    );
-  }
-  if (error) return <p className="text-center text-red-500">{error}</p>;
-  if (!construction) return <p className="text-center text-slate-500">Chantier non trouvé</p>;
-
-
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[calc(100dvh-65px)] w-full p-8">
+                <Loading />
+            </div>
+        );
+    }
+    if (error) return <p className="text-center text-red-500">{error}</p>;
+    if (!construction) return <p className="text-center text-slate-500">Chantier non trouvé</p>;
 
     return (
         <main className="min-h-[calc(100dvh-65px)] p-8 bg-gray-100">
@@ -85,22 +85,24 @@ export default function ConstructionDetails() {
                         Retour à la liste
                     </Link>
 
-                    <div className="flex space-x-2">
-                        {isEditing && (
+                    {user?.role === "Admin" && (
+                        <div className="flex space-x-2">
+                            {isEditing && (
+                                <button
+                                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-1 outline-offset-4 disabled:pointer-events-none disabled:opacity-50 bg-red-200 text-red-950 hover:bg-red-300 h-9 px-4 py-2 block text-center cursor-pointer"
+                                    onClick={handleCancel}
+                                >
+                                    Annuler
+                                </button>
+                            )}
                             <button
-                                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-1 outline-offset-4 disabled:pointer-events-none disabled:opacity-50 bg-red-200 text-red-950 hover:bg-red-300 h-9 px-4 py-2 block text-center cursor-pointer"
-                                onClick={handleCancel}
+                                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-1 outline-offset-4 disabled:pointer-events-none disabled:opacity-50 bg-slate-200 text-slate-950 hover:bg-slate-300 h-9 px-4 py-2 block text-center cursor-pointer"
+                                onClick={isEditing ? handleSave : () => setIsEditing(true)}
                             >
-                                Annuler
+                                {isEditing ? "Enregistrer" : "Modifier"}
                             </button>
-                        )}
-                        <button
-                            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-1 outline-offset-4 disabled:pointer-events-none disabled:opacity-50 bg-slate-200 text-slate-950 hover:bg-slate-300 h-9 px-4 py-2 block text-center cursor-pointer"
-                            onClick={isEditing ? handleSave : () => setIsEditing(true)}
-                        >
-                            {isEditing ? "Enregistrer" : "Modifier"}
-                        </button>
-                    </div>
+                        </div>
+                    )}
                 </div>
                 <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-2">
