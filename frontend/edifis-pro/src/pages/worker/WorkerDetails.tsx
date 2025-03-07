@@ -3,10 +3,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import userService, { User } from "../../../services/userService";
-import competenceService, { Competence } from "../../../services/competenceService";
+import competenceService, {
+  Competence,
+} from "../../../services/competenceService";
 import Loading from "../../components/loading/Loading";
 
-const DEFAULT_IMAGE = "https://www.capcampus.com/img/u/1/job-etudiant-batiment.jpg";
+const DEFAULT_IMAGE =
+  "https://www.capcampus.com/img/u/1/job-etudiant-batiment.jpg";
 
 export default function WorkerDetails() {
   const { id } = useParams<{ id: string }>();
@@ -77,8 +80,12 @@ export default function WorkerDetails() {
       updatedSkills = currentSkills.filter((c) => c.competence_id !== skillId);
     } else {
       // Ajoute la compétence
-      const skillName = allSkills.find((s) => s.competence_id === skillId)?.name || "";
-      updatedSkills = [...currentSkills, { competence_id: skillId, name: skillName }];
+      const skillName =
+        allSkills.find((s) => s.competence_id === skillId)?.name || "";
+      updatedSkills = [
+        ...currentSkills,
+        { competence_id: skillId, name: skillName },
+      ];
     }
 
     setWorker((prev) =>
@@ -103,8 +110,15 @@ export default function WorkerDetails() {
     if (!worker || worker.user_id === undefined) return;
     try {
       console.log("Enregistrement des modifications pour le worker :", worker);
+      // Préparer le payload en s'assurant que "competences" est un tableau d'identifiants
+      const updatePayload = {
+        ...worker,
+        competences: worker.competences?.map((c) =>
+          typeof c === "object" ? c.competence_id : c
+        ),
+      };
       // Mise à jour via userService.update
-      await userService.update(worker.user_id, worker);
+      await userService.update(worker.user_id, updatePayload);
       setIsEditing(false);
       console.log("Mise à jour réussie !");
     } catch (err) {
@@ -131,7 +145,9 @@ export default function WorkerDetails() {
   return (
     <main className="min-h-[calc(100dvh-65px)] p-8 bg-gray-100">
       <div className="bg-white shadow-md rounded-lg p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Détails de l'employé</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          Détails de l'employé
+        </h1>
         <div className="flex items-center mb-4">
           <img
             src={worker.profile_picture || DEFAULT_IMAGE}

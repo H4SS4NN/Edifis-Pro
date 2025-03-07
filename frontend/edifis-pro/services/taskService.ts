@@ -31,6 +31,7 @@ const taskService = {
 
   // Mettre à jour une tâche
   update: async (id: number, data: Partial<Task>): Promise<Task> => {
+    console.log(data);
     return await apiService.put<Task>(`/tasks/${id}`, data);
   },
 

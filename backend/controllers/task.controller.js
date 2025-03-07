@@ -22,7 +22,7 @@ exports.getAllTasks = async (req, res) => {
                 },
                 {
                     model: ConstructionSite,
-                    attributes: ["construction_site_id", "name", "state", "open_time", "end_time"]
+                    attributes: ["construction_site_id", "name", "state", "open_time", "end_time", 'start_date', 'end_date', 'image_url', 'chef_de_projet_id', 'adresse'],
                 }
             ]
         });
@@ -50,10 +50,12 @@ exports.getTaskById = async (req, res) => {
 
 exports.updateTask = async (req, res) => {
     try {
+        console.log(req.body);
         const task = await Task.findByPk(req.params.id);
         if (!task) return res.status(404).json({ message: "Tâche non trouvée" });
 
         await task.update(req.body);
+        console.log(task);
         res.json(task);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -68,6 +70,16 @@ exports.deleteTask = async (req, res) => {
         await task.destroy();
         res.json({ message: "Tâche supprimée" });
     } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.gettaskbychefdechantier = async (req, res) => {
+    try {
+        console.log(req.params.id);
+
+    }
+    catch (error) {
         res.status(500).json({ error: error.message });
     }
 };

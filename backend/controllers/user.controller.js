@@ -12,15 +12,13 @@ const { Op } = require("sequelize");
 // Inscription (Création de compte avec JWT)
 exports.createUser = async (req, res) => {
     try {
-        // Seul un Responsable (role_id = 1) peut créer un utilisateur
-        if (req.user.role !== 1) {
-            return res.status(403).json({ message: "Accès refusé. Seul un Responsable peut créer un utilisateur" });
-        }
 
-        const { firstname, lastname, email, password, role_id, numberphone } = req.body;
+        console.log(req.body);
 
-        // Vérifier que tous les champs sont fournis
-        if (!firstname || !lastname || !email || !password || !role_id || !numberphone) {
+        const { firstname, lastname, email, password, role, numberphone, competences } = req.body;
+
+        // Vérifier que tous les champs requis sont fournis
+        if (!firstname || !lastname || !email || !password || !role || !numberphone) {
             return res.status(400).json({ message: "Tous les champs sont requis, y compris le numéro de téléphone" });
         }
 
@@ -39,9 +37,15 @@ exports.createUser = async (req, res) => {
             lastname,
             email,
             password: hashedPassword,
-            role_id,
-            numberphone  // 👈 Ajout du champ numberphone
+            role, // Attention : ici, role_id doit correspondre à l'ENUM défini dans votre modèle (ex. "Manager", "Worker", "Admin")
+            numberphone
         });
+
+        // Ajout des compétences associées, si elles sont fournies dans le tableau "competences"
+        if (competences && Array.isArray(competences) && competences.length > 0) {
+            // Utilise la méthode générée par Sequelize pour la relation N-N
+            await user.setCompetences(competences);
+        }
 
         res.status(201).json({ message: "Utilisateur créé avec succès", user });
     } catch (error) {
@@ -96,46 +100,45 @@ exports.login = async (req, res) => {
 
 
 
-// Récupérer tous les utilisateurs sauf ceux avec `role_id = 1` (Responsables)
-// Inscription (Création de compte avec JWT)
-exports.createUser = async (req, res) => {
-    try {
-        // Seul un Admin peut créer un utilisateur
-        if (req.user.role !== "Admin") {
-            return res.status(403).json({ message: "Accès refusé. Seul un Admin peut créer un utilisateur" });
-        }
 
-        const { firstname, lastname, email, password, role, numberphone } = req.body;
+// exports.createUser = async (req, res) => {
+//     try {
+//         // Seul un Admin peut créer un utilisateur
+//         if (req.user.role !== "Admin") {
+//             return res.status(403).json({ message: "Accès refusé. Seul un Admin peut créer un utilisateur" });
+//         }
 
-        // Vérifier que tous les champs sont fournis
-        if (!firstname || !lastname || !email || !password || !role || !numberphone) {
-            return res.status(400).json({ message: "Tous les champs sont requis, y compris le numéro de téléphone et le rôle" });
-        }
+//         const { firstname, lastname, email, password, role, numberphone } = req.body;
 
-        // Vérifier si l'email existe déjà
-        const existingUser = await User.findOne({ where: { email } });
-        if (existingUser) {
-            return res.status(400).json({ message: "Cet email est déjà utilisé" });
-        }
+//         // Vérifier que tous les champs sont fournis
+//         if (!firstname || !lastname || !email || !password || !role || !numberphone) {
+//             return res.status(400).json({ message: "Tous les champs sont requis, y compris le numéro de téléphone et le rôle" });
+//         }
 
-        // Hacher le mot de passe avant l'insertion
-        const hashedPassword = await bcrypt.hash(password, 10);
+//         // Vérifier si l'email existe déjà
+//         const existingUser = await User.findOne({ where: { email } });
+//         if (existingUser) {
+//             return res.status(400).json({ message: "Cet email est déjà utilisé" });
+//         }
 
-        // Création de l'utilisateur avec le rôle directement
-        const user = await User.create({
-            firstname,
-            lastname,
-            email,
-            password: hashedPassword,
-            role,
-            numberphone  // 👈 Ajout du champ numberphone
-        });
+//         // Hacher le mot de passe avant l'insertion
+//         const hashedPassword = await bcrypt.hash(password, 10);
 
-        res.status(201).json({ message: "Utilisateur créé avec succès", user });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+//         // Création de l'utilisateur avec le rôle directement
+//         const user = await User.create({
+//             firstname,
+//             lastname,
+//             email,
+//             password: hashedPassword,
+//             role,
+//             numberphone  // 👈 Ajout du champ numberphone
+//         });
+
+//         res.status(201).json({ message: "Utilisateur créé avec succès", user });
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// };
 
 // Connexion (Login)
 exports.login = async (req, res) => {
@@ -293,18 +296,26 @@ exports.updateUser = async (req, res) => {
         const user = await User.findByPk(req.params.id);
         if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
 
-        const { firstname, lastname, email, password, role } = req.body;
+        const { firstname, lastname, email, password, role, competences } = req.body;
 
         if (password) {
             req.body.password = await bcrypt.hash(password, 10);
         }
 
+        // Mise à jour des champs de l'utilisateur
         await user.update(req.body);
+
+        // Mise à jour des compétences si le champ est fourni et est un tableau
+        if (competences && Array.isArray(competences)) {
+            await user.setCompetences(competences);
+        }
+
         res.json({ message: "Utilisateur mis à jour", user });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 
 // Mettre à jour l’image de profil

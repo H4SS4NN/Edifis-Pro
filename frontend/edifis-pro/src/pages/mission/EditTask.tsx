@@ -53,7 +53,9 @@ export default function EditTask() {
     const fetchUsersAndConstructions = async () => {
       try {
         const [usersData, constructionsData] = await Promise.all([
-          user.role === "Admin" ? userService.getAllUsers() : userService.getAllWorkers(),
+          user.role === "Admin"
+            ? userService.getAllUsers()
+            : userService.getAllWorkers(),
           constructionService.getAll(),
         ]);
         setUsers(usersData);
@@ -152,7 +154,7 @@ export default function EditTask() {
           </select>
         </div>
 
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label className="block text-gray-700">Chantier :</label>
           <select
             value={selectedConstruction || ""}
@@ -170,7 +172,7 @@ export default function EditTask() {
               </option>
             ))}
           </select>
-        </div>
+        </div> */}
 
         <div className="mb-4">
           <label className="block text-gray-700">Date de début :</label>
